@@ -1,19 +1,20 @@
-/vendor/
-node_modules/
+laravel-task-manager/vendor/
+laravel-task-manager/node_modules/
+laravel-task-manager-front/node_modules/
 npm-debug.log
 yarn-error.log
 
 # Laravel 4 specific
-bootstrap/compiled.php
-app/storage/
+laravel-task-manager/bootstrap/compiled.php
+laravel-task-manager/app/storage/
 
 # Laravel 5 & Lumen specific
-public/storage
-public/hot
+laravel-task-manager/public/storage
+laravel-task-manager/public/hot
 
 # Laravel 5 & Lumen specific with changed public path
-public_html/storage
-public_html/hot
+laravel-task-manager/public_html/storage
+laravel-task-manager/public_html/hot
 
 storage/*.key
 .env
