@@ -16,10 +16,6 @@ class Task extends Model
     protected $fillable = [
         'title',
         'description',
-        'priority',
-        'status',
-        'project_id',
-        'user_id', // Foreign key for the user who owns the task
     ];
 
     protected $hidden = [];
@@ -39,7 +35,7 @@ class Task extends Model
 
     public function tags()
     {
-        return $this->hasMany(Tag::class);
+        return $this->belongsToMany(Tag::class, 'task_tag');
     }
 
     #Scope Events

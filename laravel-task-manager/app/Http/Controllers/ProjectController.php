@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Project;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProjectController extends Controller
 {
@@ -18,8 +19,11 @@ class ProjectController extends Controller
         $project = new Project();
         $user = Auth::user();
 
-        $project->title = $validatedData['title'];
-        $project->description = $validatedData['description'];
+        $project->update([
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description']
+        ]);
+
         $project->user_id = $user->id;
         $project->status = 'active';
 
@@ -34,13 +38,27 @@ class ProjectController extends Controller
     public function getProjects($id = null)
     {
         if ($id) {
-            $project = Project::findOrFail($id);
+            try {
+                $project = Project::findOrFail($id);
+            } catch (ModelNotFoundException $e) {
+                return response()->json([
+                    'message' => 'Project not found!',
+                    'status' => 'failed',
+                ], 201);
+            }
 
-            return response()->json([
-                'message' => 'Project retrieved successfully!',
-                'status' => 'success',
-                'data' => $project
-            ], 201);
+            if ($project->user_id == Auth::id()) {
+                return response()->json([
+                    'message' => 'Project retrieved successfully!',
+                    'status' => 'success',
+                    'data' => $project
+                ], 201);
+            } else {
+                return response()->json([
+                    'message' => 'Unauthorixed Access!',
+                    'status' => 'failed',
+                ], 201);
+            }
         } else {
             $user = Auth::user();
 
@@ -55,37 +73,66 @@ class ProjectController extends Controller
         }
     }
 
-    public function deleteProject($id)
-    {
-        $project = Project::findOrFail($id);
-
-        $project->delete();
-
-        return response()->json([
-            'message' => 'Project deleted successfully!',
-            'status' => 'success'
-        ], 201);
-    }
-
     public function updateProject(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'title' => 'nullable|string|min:4|max:20|unique:projects,title',
-            'description' => 'nullable|string|max:100',
+            'title' => 'required|string|min:4|max:20|unique:projects,title',
+            'description' => 'required|string|max:100',
             'status' => 'required|in:active,completed,paused,cancelled'
         ]);
 
-        $project = Project::findOrFail($id);
+        try {
+            $project = Project::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Project not found.',
+                'status' => 'failed'
+            ], 201);
+        }
 
-        if (!empty($validatedData['title'])) $project->title = $validatedData['title'];
-        if (!empty($validatedData['description'])) $project->description = $validatedData['description'];
-        if (!empty($validatedData['status'])) $project->status = $validatedData['status'];
+        if (Auth::id() == $project->user_id) {
+            $project->update([$validatedData['title'], $validatedData['description']]);
 
-        $project->save();
+            if (!empty($validatedData['status'])) $project->status = $validatedData['status'];
 
-        return response()->json([
-            'message' => 'Project updated successfully',
-            'status' => 'success'
-        ], 201);
+            $project->save();
+
+            return response()->json([
+                'message' => 'Project updated successfully',
+                'status' => 'success'
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => 'Unauthorized Access!',
+                'status' => 'success'
+            ], 201);
+        }
+    }
+
+    public function deleteProject($id)
+    {
+        try {
+            $project = Project::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Project not found.',
+                'status' => 'failed'
+            ], 201);
+        }
+
+
+        if (Auth::id() == $project->user_id) {
+            $project->delete();
+
+            return response()->json([
+                'message' => 'Project deleted successfully!',
+                'status' => 'success'
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => 'Unauthorized Access!',
+                'status' => 'success'
+            ], 201);
+        }
     }
 }

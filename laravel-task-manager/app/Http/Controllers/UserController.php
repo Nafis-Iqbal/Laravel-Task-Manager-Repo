@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -50,7 +51,14 @@ class UserController extends Controller
     public function getUsers($id = null)
     {
         if ($id) {
-            $user = User::findOrFail($id);
+            try {
+                $user = User::findOrFail($id);
+            } catch (ModelNotFoundException $e) {
+                return response()->json([
+                    'message' => 'User not found.',
+                    'status' => 'failed',
+                ], 200);
+            }
 
             return response()->json([
                 'status' => 'success',
@@ -91,35 +99,27 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function deleteUser(Request $request, $id = null)
+    public function deleteUser(Request $request)
     {
-        //Admin deletes a User
-        if ($id) {
-            $user = User::findOrFail($id);
+        $validatedData = $request->validate([
+            'password' => 'required|min:6|confirmed'
+        ]);
+
+        $user = Auth::user();
+
+        if (Hash::check($validatedData['password'], $user->password)) {
+            /** @var \App\Models\User $user **/
             $user->delete();
 
-            return response()->json(['message' => 'User deleted successfully.'], 200);
+            return response()->json([
+                'message' => 'Account deleted',
+                'status' => 'success'
+            ], 200);
         } else {
-            $validatedData = $request->validate([
-                'password' => 'required|min:6|confirmed'
-            ]);
-
-            $user = Auth::user();
-
-            if (Hash::check($validatedData['password'], $user->password)) {
-                /** @var \App\Models\User $user **/
-                $user->delete();
-
-                return response()->json([
-                    'message' => 'Account deleted',
-                    'status' => 'success'
-                ], 200);
-            } else {
-                return response()->json([
-                    'message' => 'Incorrect Password!',
-                    'status' => 'failed'
-                ], 200);
-            }
+            return response()->json([
+                'message' => 'Incorrect Password!',
+                'status' => 'failed'
+            ], 200);
         }
     }
 }

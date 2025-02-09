@@ -22,39 +22,38 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('create_user', [UserController::class, 'createUser'])->name('create_user');
+Route::post('users/create', [UserController::class, 'createUser'])->name('user.create');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('users', [UserController::class, 'getUsers'])->name('user.index');
     Route::get('users/{id}', [UserController::class, 'getUsers'])->name('user.show');
-    Route::put('update_user', [UserController::class, 'updateUser'])->name('update_user');
-    Route::delete('delete_user', [UserController::class, 'deleteUser'])->name('delete_user');
+    Route::put('users/update', [UserController::class, 'updateUser'])->name('user.update');
+    Route::delete('users/delete', [UserController::class, 'deleteUser'])->name('user.delete');
 
-    Route::get('projects', [ProjectController::class, 'getProjects'])->name('projects');
-    Route::get('projects/{id}', [ProjectController::class, 'getProjects'])->name('project');
-    Route::post('create_project', [ProjectController::class, 'createProject'])->name('create_Project');
-    Route::put('update_project/{id}', [ProjectController::class, 'updateProject'])->name('update_Project');
-    Route::delete('delete_project/{id}', [ProjectController::class, 'deleteProject'])->name('delete_Project');
+    Route::get('projects', [ProjectController::class, 'getProjects'])->name('projects.index');
+    Route::get('projects/{id}', [ProjectController::class, 'getProjects'])->name('project.show');
+    Route::post('projects/create', [ProjectController::class, 'createProject'])->name('project.create');
+    Route::put('projects/update/{id}', [ProjectController::class, 'updateProject'])->name('project.update');
+    Route::delete('projects/delete/{id}', [ProjectController::class, 'deleteProject'])->name('project.delete');
 
-    Route::get('tasks', [TaskController::class, 'getTasks'])->name('tasks');
-    Route::post('create_task', [TaskController::class, 'createTask'])->name('create_Task');
-    Route::put('update_task/{id}', [TaskController::class, 'updateTask'])->name('update_Task');
-    Route::delete('delete_task/{id}', [TaskController::class, 'deleteTask'])->name('delete_Task');
+    Route::get('tasks', [TaskController::class, 'getTasks'])->name('task.index');
+    Route::get('tasks/{id}', [TaskController::class, 'getTasks'])->name('task.show');
+    Route::get('tasks/{id}/tags', [TaskController::class, 'getTaskTags'])->name('task.tags');
+    Route::post('tasks/create/{projectId}', [TaskController::class, 'createTask'])->name('task.create');
+    Route::put('tasks/update/{id}', [TaskController::class, 'updateTask'])->name('task.update');
+    Route::patch('tasks/update/{id}/tag', [TaskController::class, 'updateTaskTag'])->name('task.update_tag');
+    Route::delete('tasks/delete/{id}', [TaskController::class, 'deleteTask'])->name('task.delete');
 
-    Route::get('tags', [TagController::class, 'getTags'])->name('tags');
-    Route::post('create_tag', [TagController::class, 'createTag'])->name('create_tag');
-    Route::put('update_tag/{id}', [TagController::class, 'updateTag'])->name('update_tag');
-    Route::delete('delete_tag/{id}', [TagController::class, 'deleteTag'])->name('delete_tag');
+    Route::get('tags', [TagController::class, 'getTags'])->name('tag.index');
+    Route::post('tags/create', [TagController::class, 'createTag'])->name('tag.create');
+    Route::put('tags/update/{id}', [TagController::class, 'updateTag'])->name('tag.update');
+    Route::delete('tags/delete/{id}', [TagController::class, 'deleteTag'])->name('tag.delete');
 
-    Route::get('notifications', [NotificationController::class, 'getNotifications'])->name('notifications');
-    Route::post('create_notification', [NotificationController::class, 'createNotification'])->name('create_notification');
-    Route::put('update_notification/{id}', [NotificationController::class, 'updateNotification'])->name('update_notification');
-    Route::delete('delete_notification/{id}', [NotificationController::class, 'deleteNotification'])->name('delete_notification');
-
-    Route::get('admin/users', [AdminController::class, 'getAdmins'])->name('admins');
-    Route::put('admin/users/{id}/role', [AdminController::class, 'updateUserRole'])->name('update_user_role');
-    Route::delete('admin/users/{id}', [AdminController::class, 'deleteUser'])->name('admin_delete_user');
+    Route::get('admin/users', [AdminController::class, 'getAdmins'])->name('admin.index');
+    Route::get('admin/users/create', [AdminController::class, 'createUser'])->name('admin.create_user');
+    Route::put('admin/users/update/{id}/role', [AdminController::class, 'updateUserRole'])->name('admin.update_user_role');
+    Route::delete('admin/users/delete/{id}', [AdminController::class, 'deleteUser'])->name('admin.delete_user');
 });
 
-Route::get('filter_content', [NotificationController::class, 'getFilteredContent'])->name('filter_content');
+Route::get('filter_content', [ContentFilterController::class, 'getFilteredContent'])->name('filter_content');
