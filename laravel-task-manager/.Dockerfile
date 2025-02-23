@@ -18,7 +18,7 @@ COPY . .
 # Install Laravel dependencies via Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Expose port 3000 (Render uses 3000 by default)
+# Expose port 3000 (Render uses 3000 by default
 EXPOSE 3000
 
 # Run Laravel's artisan server on startup
