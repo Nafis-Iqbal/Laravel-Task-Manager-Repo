@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: laravel-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan key:generate
+      php artisan migrate --force
+    startCommand: php artisan serve --host=0.0.0.0 --port=3000
