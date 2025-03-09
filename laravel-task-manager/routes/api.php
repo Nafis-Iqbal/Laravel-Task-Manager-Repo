@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('users/create', [UserController::class, 'createUser'])->name('user.create');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'api'])->group(function () {
     Route::get('users', [UserController::class, 'getUsers'])->name('user.index');
     Route::get('users/{id}', [UserController::class, 'getUsers'])->name('user.show');
     Route::put('users/update', [UserController::class, 'updateUser'])->name('user.update');
