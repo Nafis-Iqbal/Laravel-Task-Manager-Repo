@@ -11,7 +11,7 @@ export default defineConfig({
   ],
   define: {
     // Define environment variables to be injected into your code
-    'process.env': process.env,
+    'process.env': {},
   },
   server: {
     // You can specify the server settings here, such as port or proxy

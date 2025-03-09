@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate , useParams} from "react-router-dom";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+
 import { generateFakeTasks } from "../Utilities/FakeData";
 import {priority, statusEnum, role} from "../Types&Enums/Enums";
+import { useGetTasksByProjectRQ } from "../Services/API/TaskApi";
 
-import TaskRow from "../Components/ProjectTaskRow";
+import TaskRow from "../Components/ElementComponents/ProjectTaskRow";
 
 //const isDebugMode = import.meta.env.VITE_APP_DEBUG_MODE === 'true';
-const isDebugMode = true;
+let isDebugMode: boolean = true;
 
 let initialTasks: Task[] = [];
 
-if(isDebugMode === true){
+if(isDebugMode){
   initialTasks = generateFakeTasks(10);
 }
 
@@ -25,11 +27,23 @@ const chartData = [
 const COLORS = ["#22c55e", "#3b82f6", "#f59e0b"]; // Green, Blue, Orange
 
 const ProjectDetailsPage: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>(isDebugMode? initialTasks: []);
   const [isProgressSortAscending, setIsProgressSortAscending] = useState(true);
   const [isDateSortAscending, setIsDateSortAscending] = useState(true);
   const navigate = useNavigate();
+
   const {projectId} = useParams();
+  const projectIdNumber = Number(projectId);
+
+  const {data: projectTasks} = useGetTasksByProjectRQ(
+    projectIdNumber, () => {
+      setTasks(projectTasks?.data.data);
+    }
+  );
+
+  useEffect(() => {
+    setTasks(projectTasks?.data.data);
+  }, [projectTasks]);
 
   // Sorting Handlers
   const sortByDueDate = () => {
@@ -92,9 +106,13 @@ const ProjectDetailsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {tasks.map((task) => (
-                <TaskRow key={task.task_id} task={task} onClick={() => navigate(`/tasks/${task.task_id}`)} />
-              ))}
+              {tasks && tasks.length > 0 ? (
+                  tasks.map((task) => (
+                    <TaskRow key={task.id} task={task} onClick={() => navigate(`/tasks/${task.id}`)} />
+                  ))
+              ) : (
+                <div></div>
+              )}
             </tbody>
           </table>
         </div>

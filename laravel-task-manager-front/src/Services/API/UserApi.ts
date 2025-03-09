@@ -1,9 +1,10 @@
 import api from './ApiInstance';
+import { AxiosResponse } from 'axios';
 
-export const fetchUsers = async (): Promise<User[]> => {
+export const fetchUsers = async (): Promise<AxiosResponse> => {
     try{
-        const response = await api.get<User[]>("users");
-        return response.data;
+        const response = await api.get<ApiResponse<User[]>>("users");
+        return response;
     }
     catch(error)
     {
@@ -12,12 +13,12 @@ export const fetchUsers = async (): Promise<User[]> => {
     }
 };
 
-export const fetchUser = async (id: number): Promise<User> => {
+export const fetchUser = async (id: number): Promise<AxiosResponse> => {
     try{
         const params = new URLSearchParams({id: id.toString()})
-        const response = await api.get<User>(`users?${params.toString()}`);
+        const response = await api.get<ApiResponse<User>>(`users?${params.toString()}`);
         
-        return response.data;
+        return response;
     }
     catch(error)
     {
@@ -26,13 +27,13 @@ export const fetchUser = async (id: number): Promise<User> => {
     }
 }
 
-export const createUser = async (name: string, email: string, password: string, password_confirmation: string): Promise<Auth> => {
+export const createUser = async (name: string, email: string, password: string, password_confirmation: string): Promise<AxiosResponse> => {
     try{
-        const response = await api.post<Auth>("users/create", {
+        const response = await api.post<ApiResponse<Auth>>("users/create", {
             name, email, password, password_confirmation
         });
 
-        return response.data;
+        return response;
     }
     catch(error)
     {
@@ -41,13 +42,13 @@ export const createUser = async (name: string, email: string, password: string, 
     }
 }
 
-export const loginUser = async (email: string, password: string): Promise<Auth> => {
+export const loginUser = async (email: string, password: string): Promise<AxiosResponse> => {
     try{
-        const response = await api.post<Auth>("login", {
+        const response = await api.post<ApiResponse<Auth>>("login", {
             email, password
         });
-
-        return response.data;
+        console.log(response.data);
+        return response;
     }
     catch(error)
     {

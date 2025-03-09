@@ -3,20 +3,28 @@ import './index.css';
 import React, { Suspense } from 'react';
 import { useRoutes} from 'react-router-dom';
 
-import { useAuthSelector } from './ContextAPIs/AuthContextAPI';
+import { useAuthSelector } from './Hooks/StateHooks';
 import appRoutes from './Routes/AppRoutes';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import Navbar from './Components/Navbar';
+import Navbar from './Components/StructureComponents/Navbar';
+import Footer from './Components/StructureComponents/FooterSection';
+import { queryClient } from './Services/API/ApiInstance';
 
 function App() {
   //const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Ensure it returns a boolean
   const isAuthenticated = useAuthSelector((state) => state.auth.isAuthenticated);
 
   return (
-    <Suspense>
-      <Navbar />
-      {useRoutes(appRoutes)}
-    </Suspense>
+    <QueryClientProvider client={queryClient}>
+      <Suspense>
+        <Navbar />
+        {useRoutes(appRoutes)}
+        {isAuthenticated && <Footer/>}
+      </Suspense>
+      <ReactQueryDevtools initialIsOpen={true} />
+    </QueryClientProvider>
   );
 }
 

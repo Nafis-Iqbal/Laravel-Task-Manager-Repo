@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Updated to useNavigate for React Router v6
+import { AxiosResponse } from 'axios';
+
 import {createUser, loginUser} from '../Services/API/UserApi';
-import { useAuthDispatch, setAuth} from '../ContextAPIs/AuthContextAPI';
+import { setAuth} from '../ContextAPIs/AuthSlice';
+import { useAuthDispatch } from '../Hooks/StateHooks';
+
 
 
 const LoginPage: React.FC = () => {
@@ -18,8 +22,8 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     const response = await loginUser(email, password);
 
-    if (response?.auth_token) {     
-      dispatch(setAuth({ token: response.auth_token, user_id: response.user_id }));
+    if (response.data?.auth_token) {     
+      dispatch(setAuth({ token: response.data.auth_token, user_id: response.data.user_id }));
     }
 
     navigate('/dashboard');
@@ -29,8 +33,8 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     const response = await createUser(name, email, password, passwordConfirmation);
 
-    if (response?.auth_token) {     
-      dispatch(setAuth({ token: response.auth_token, user_id: response.user_id }));
+    if (response.data?.auth_token) {     
+      dispatch(setAuth({ token: response.data.auth_token, user_id: response.data.user_id }));
     }
 
     navigate('/dashboard');

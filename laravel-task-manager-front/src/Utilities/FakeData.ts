@@ -26,7 +26,7 @@ export const generateFakeTask = (existingTaskIds: Set<number>, totalTasks: numbe
   existingTaskIds.add(task_id);
 
   return {
-    task_id,
+    id: task_id,
     title: faker.lorem.words(3),
     description: faker.lorem.sentence(),
     progress: faker.number.int({ min: 0, max: 100 }),
@@ -57,7 +57,7 @@ export const generateFakeProject = (existingProjectIds: Set<number>, totalProjec
   existingProjectIds.add(project_id);
 
   return {
-    project_id,
+    id: project_id,
     title: faker.lorem.words(3),
     description: faker.lorem.sentence(),
     progress: faker.number.int({ min: 0, max: 100 }),
@@ -85,11 +85,31 @@ export const generateFakeComment = (existingCommentIds: Set<number>, totalCommen
 
   return {
     id,
-    text: faker.lorem.sentence(),
+    comment: faker.lorem.sentence(),
   }
 }
 
 export const generateFakeComments = (count: number) => {
   const existingCommentIds = new Set<number>();
   return Array.from({length: count}, () => generateFakeComment(existingCommentIds, count));
-} 
+}
+
+export const generateFakeTag = (existingTagIds: Set<number>, totalTags: number) => {
+  let tag_id;
+
+  do{
+    tag_id = faker.number.int({min:1, max: totalTags});
+  } while (existingTagIds.has(tag_id));
+
+  existingTagIds.add(tag_id);
+
+  return {
+    id: tag_id,
+    title: faker.lorem.words(1),
+  }
+}
+
+export const generateFakeTags = (count: number) => {
+  const existingTagIds = new Set<number>();
+  return Array.from({length: count}, () => generateFakeTag(existingTagIds, count));
+}

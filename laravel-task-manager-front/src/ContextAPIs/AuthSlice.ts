@@ -1,8 +1,7 @@
-import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Define the initial state type
-interface AuthState {
+export interface AuthState {
   isAuthenticated: boolean;
   token: string | null;
   user_id: number | null;
@@ -35,19 +34,5 @@ const authSlice = createSlice({
 
 // Export actions
 export const { setAuth, logout } = authSlice.actions;
-
-// Configure the store
-const store = configureStore({
-  reducer: {
-    auth: authSlice.reducer,
-  },
-});
-
-// Export the store
-export default store;
-
-// Custom hooks to use in components
-export const useAuthDispatch = () => useDispatch<typeof store.dispatch>();
-export const useAuthSelector = <TSelected>(selector: (state: { auth: AuthState }) => TSelected): TSelected =>
-  useSelector(selector);
+export const authReducer = authSlice.reducer;
 

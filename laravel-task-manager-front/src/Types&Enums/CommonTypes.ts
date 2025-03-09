@@ -2,16 +2,16 @@ import {priority, statusEnum, role} from "../Types&Enums/Enums";
 
 declare global{
     interface User{
-        user_id: number;
+        id: number;
         name: string;
         email: string;
         role: role;
     }
     
     interface Project{
-        project_id: number;
+        id: number;
         title: string;
-        description?: string;
+        description: string;
         progress: number;
         user_id: number;
         status: statusEnum;
@@ -20,9 +20,9 @@ declare global{
     }
 
     interface Task{
-        task_id: number;
+        id: number;
         title: string;
-        description?: string;
+        description: string;
         progress: number;
         user_id: number;
         project_id: number;
@@ -32,9 +32,20 @@ declare global{
         end_Date: Date;
     }
 
+    interface Tag{
+        id: number;
+        title: string;
+    }
+
     export interface Comments{
         id: number;
-        text: string;
+        comment: string;
+    }
+
+    interface ApiResponse<T>{
+        status: string;
+        message: string;
+        data: T;
     }
 
     interface Auth{

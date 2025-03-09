@@ -20,7 +20,7 @@ const ProjectTaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
           />
         </div>
       </td>
-      <td className="p-3">{task.end_Date.toDateString()}</td>
+      <td className="p-3">{task.end_Date ? task.end_Date.toDateString() : "No end date"}</td>
     </tr>
   );
 };

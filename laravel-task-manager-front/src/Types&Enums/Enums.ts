@@ -1,19 +1,19 @@
 export enum role{
-    user,
-    manager,
-    admin
+    user = "user",
+    manager = "manager",
+    admin = "admin"
 }
 
 export enum statusEnum{
-    active,
-    completed,
-    paused,
-    cancelled
+    active = "active",
+    completed = "completed",
+    paused = "paused",
+    cancelled = "cancelled"
 }
 
 export enum priority{
-    urgent,
-    normal
+    urgent = "urgent",
+    normal = "normal"
 }
 
 export{}

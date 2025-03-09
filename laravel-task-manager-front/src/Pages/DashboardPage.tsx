@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Footer from '../Components/StructureComponents/FooterSection';
 
 const tasks = [
   { id: 1, title: "Task 1", dueDate: "2025-02-20", priority: "High", status: "In Progress", assignedTo: "John" },
@@ -31,8 +32,8 @@ const DashboardPage: React.FC = () => {
 
       <div className="flex flex-1 p-4 space-x-4">
         {/* Sidebar */}
-        <aside className="w-1/4 bg-white rounded-lg shadow-md p-4">
-          <h2 className="font-semibold text-lg mb-4">Quick Actions</h2>
+        <aside className="w-1/4 bg-black rounded-lg shadow-md p-4">
+          <h2 className="font-semibold text-lg text-white mb-4">Quick Actions</h2>
           <ul>
             <li>
               <button className="w-full text-left bg-blue-500 text-white py-2 px-4 rounded-md mb-2 hover:bg-blue-600 transition">Create New Task</button>
@@ -47,7 +48,7 @@ const DashboardPage: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="w-3/4 flex flex-col space-y-4">
+        <main className="w-3/4 flex-col space-y-4">
           {/* Stats */}
           <section className="grid grid-cols-3 gap-4">
             <div className="bg-white rounded-lg shadow-md p-4 flex items-center justify-between">
@@ -117,11 +118,6 @@ const DashboardPage: React.FC = () => {
           </section>
         </main>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white text-center py-4">
-        <p>&copy; 2025 Task Manager. All rights reserved.</p>
-      </footer>
     </div>
   );
 };

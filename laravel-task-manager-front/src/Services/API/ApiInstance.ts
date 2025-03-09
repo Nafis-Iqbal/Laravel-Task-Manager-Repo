@@ -1,4 +1,8 @@
 import axios from 'axios';
+import store from '../../ContextAPIs/GlobalStateStore';
+import { QueryClient } from '@tanstack/react-query';
+
+export const queryClient = new QueryClient();
 
 // Create Axios instance with default config
 const api = axios.create({
@@ -13,7 +17,8 @@ const api = axios.create({
 // Add request interceptor
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = store.getState().auth.token;
+
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   }, 
