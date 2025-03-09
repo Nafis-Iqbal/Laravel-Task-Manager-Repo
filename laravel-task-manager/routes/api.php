@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ContentFilterController;
 use Illuminate\Http\Request;
@@ -39,16 +40,22 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     Route::get('tasks', [TaskController::class, 'getTasks'])->name('task.index');
     Route::get('tasks/{id}', [TaskController::class, 'getTasks'])->name('task.show');
+    Route::get('tasks/project/{projectId}', [TaskController::class, 'getTasksByProject'])->name('task.project_show');
     Route::get('tasks/{id}/tags', [TaskController::class, 'getTaskTags'])->name('task.tags');
     Route::post('tasks/create/{projectId}', [TaskController::class, 'createTask'])->name('task.create');
     Route::put('tasks/update/{id}', [TaskController::class, 'updateTask'])->name('task.update');
-    Route::patch('tasks/update/{id}/tag', [TaskController::class, 'updateTaskTag'])->name('task.update_tag');
+    Route::patch('tasks/update/tags', [TaskController::class, 'addTaskTag'])->name('task.update_tag');
+    Route::patch('tasks/delete/tags', [TaskController::class, 'deleteTaskTag'])->name('task.update_tag');
     Route::delete('tasks/delete/{id}', [TaskController::class, 'deleteTask'])->name('task.delete');
 
     Route::get('tags', [TagController::class, 'getTags'])->name('tag.index');
     Route::post('tags/create', [TagController::class, 'createTag'])->name('tag.create');
     Route::put('tags/update/{id}', [TagController::class, 'updateTag'])->name('tag.update');
     Route::delete('tags/delete/{id}', [TagController::class, 'deleteTag'])->name('tag.delete');
+
+    Route::get('comments/{task_id}', [CommentController::class, 'getComments'])->name('task.comments');
+    Route::post('comments/create', [CommentController::class, 'createComment'])->name('comment.create');
+    Route::delete('comments/delete/{comment_id}', [CommentController::class, 'deleteComment'])->name('comment.delete');
 
     Route::get('admin/users', [AdminController::class, 'getAdmins'])->name('admin.index');
     Route::get('admin/users/create', [AdminController::class, 'createUser'])->name('admin.create_user');

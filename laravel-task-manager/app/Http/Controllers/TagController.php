@@ -10,7 +10,7 @@ class TagController extends Controller
 {
     public function getTags()
     {
-        $tags = Tag::all();
+        $tags = Tag::all()->toArray();
 
         return response()->json([
             'message' => 'Tags retrieved successfully',

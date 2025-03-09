@@ -43,7 +43,7 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Welcome to Task Manager!',
             'status' => 'success',
-            'access_token' => $token,
+            'auth_token' => $token,
             'token_type' => 'Bearer',
         ], 201);
     }

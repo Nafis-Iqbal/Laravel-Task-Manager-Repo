@@ -16,13 +16,12 @@ class ProjectController extends Controller
             'description' => 'required|string|max:100'
         ]);
 
-        $project = new Project();
-        $user = Auth::user();
-
-        $project->update([
+        $project = new Project([
             'title' => $validatedData['title'],
             'description' => $validatedData['description']
         ]);
+
+        $user = Auth::user();
 
         $project->user_id = $user->id;
         $project->status = 'active';
@@ -55,7 +54,7 @@ class ProjectController extends Controller
                 ], 201);
             } else {
                 return response()->json([
-                    'message' => 'Unauthorixed Access!',
+                    'message' => 'Unauthorised Access!',
                     'status' => 'failed',
                 ], 201);
             }
