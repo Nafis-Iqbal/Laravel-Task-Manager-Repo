@@ -6,12 +6,13 @@ export const queryClient = new QueryClient();
 
 // Create Axios instance with default config
 const api = axios.create({
-  //baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
+  //baseURL: 'https://laravel-task-manager-5fc2b1b299f3.herokuapp.com/api',
   baseURL: 'http://localhost:8000/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
+  timeout: 7000,
 });
 
 // Add request interceptor

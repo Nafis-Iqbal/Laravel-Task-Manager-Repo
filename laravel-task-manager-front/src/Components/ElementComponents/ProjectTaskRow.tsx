@@ -16,7 +16,6 @@ const ProjectTaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
         <div className="relative w-24 h-3 bg-gray-300 rounded-full">
           <div
             className="absolute top-0 left-0 h-full bg-blue-500 rounded-full"
-            style={{ width: `${task.progress}%` }}
           />
         </div>
       </td>

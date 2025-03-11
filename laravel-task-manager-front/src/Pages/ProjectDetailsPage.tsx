@@ -6,10 +6,12 @@ import { generateFakeTasks } from "../Utilities/FakeData";
 import {priority, statusEnum, role} from "../Types&Enums/Enums";
 import { useGetTasksByProjectRQ } from "../Services/API/TaskApi";
 
-import TaskRow from "../Components/ElementComponents/ProjectTaskRow";
+import ProjectTaskRow from "../Components/ElementComponents/ProjectTaskRow";
+import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
+import { ProjectHeroSection } from "../Components/StructureComponents/ProjectHeroSection";
 
 //const isDebugMode = import.meta.env.VITE_APP_DEBUG_MODE === 'true';
-let isDebugMode: boolean = true;
+let isDebugMode: boolean = false;
 
 let initialTasks: Task[] = [];
 
@@ -28,6 +30,7 @@ const COLORS = ["#22c55e", "#3b82f6", "#f59e0b"]; // Green, Blue, Orange
 
 const ProjectDetailsPage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(isDebugMode? initialTasks: []);
+  const [tasksFetchMessage, setTasksFetchMessage] = useState<string>("");
   const [isProgressSortAscending, setIsProgressSortAscending] = useState(true);
   const [isDateSortAscending, setIsDateSortAscending] = useState(true);
   const navigate = useNavigate();
@@ -35,15 +38,30 @@ const ProjectDetailsPage: React.FC = () => {
   const {projectId} = useParams();
   const projectIdNumber = Number(projectId);
 
-  const {data: projectTasks} = useGetTasksByProjectRQ(
-    projectIdNumber, () => {
-      setTasks(projectTasks?.data.data);
+  const {data: projectTasks, isLoading: isTasksByProjectLoading, isError: isTasksLoadingError} = useGetTasksByProjectRQ(
+    projectIdNumber, 
+    () => {
+      // setTasks(projectTasks?.data.data);
+      
+      // if(projectTasks?.data.data.length < 1){
+      //   setTasksFetchMessage("No Tasks to show.");
+      // }
+    },
+    () => {
+      //setTasksFetchMessage("Failed to load Project Tasks.");
     }
   );
 
   useEffect(() => {
     setTasks(projectTasks?.data.data);
-  }, [projectTasks]);
+
+    if(isTasksLoadingError){
+      setTasksFetchMessage("Failed to load Project Tasks.");
+    }
+    if(projectTasks?.data.data.length < 1){
+      setTasksFetchMessage("No Tasks to show.");
+    }
+  }, [projectTasks, isTasksLoadingError]);
 
   // Sorting Handlers
   const sortByDueDate = () => {
@@ -55,17 +73,15 @@ const ProjectDetailsPage: React.FC = () => {
   };
 
   const sortByProgress = () => {
-    setTasks([...tasks].sort((a, b) => 
-      isProgressSortAscending? b.progress - a.progress : a.progress - b.progress
-    ));
 
     setIsProgressSortAscending(!isProgressSortAscending);
   };
 
   return (
-    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 min-h-screen p-8 text-white">
+    <div className="min-h-screen p-8 text-white bg-gray-200">
       {/* Hero Section */}
-      <div className="bg-white text-gray-800 p-6 rounded-xl shadow-xl">
+      <ProjectHeroSection projectTasks={tasks}/>
+      {/* <div className="bg-white text-gray-800 p-6 rounded-xl shadow-xl">
         <h1 className="text-3xl font-bold mb-4 text-center">Project Dashboard</h1>
         <div className="flex justify-center">
           <ResponsiveContainer width={400} height={250}>
@@ -79,7 +95,7 @@ const ProjectDetailsPage: React.FC = () => {
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div> */}
 
       {/* Task Table Section */}
       <div className="mt-6 bg-white text-gray-800 p-6 rounded-xl shadow-xl">
@@ -106,13 +122,13 @@ const ProjectDetailsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {tasks && tasks.length > 0 ? (
-                  tasks.map((task) => (
-                    <TaskRow key={task.id} task={task} onClick={() => navigate(`/tasks/${task.id}`)} />
-                  ))
-              ) : (
-                <div></div>
-              )}
+              <TableDataBlock
+                dataList={tasks}
+                dataFetchMessage={tasksFetchMessage}
+                isDataLoading={isTasksByProjectLoading}
+                noContentColSpan={3}
+                onClickNavigate={(id: number) => navigate(`/tasks/${id}`)}
+              />
             </tbody>
           </table>
         </div>

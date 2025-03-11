@@ -24,6 +24,7 @@ declare global{
         onClose: () => void;
         onSubmit: () => void;
         onSuccess: (data: Task) => void;
+        onFailure: () => void;
     }
 
     interface CreateProjectModalProps
@@ -32,5 +33,15 @@ declare global{
         onClose: () => void;
         onSubmit: () => void;
         onSuccess: (data: Project) => void;
+        onFailure: () => void;
+    }
+
+    interface CreateTagModalProps
+    {
+        isOpen: boolean;
+        onClose: () => void;
+        onSubmit: () => void;
+        onSuccess: (data: Tag) => void;
+        onFailure: () => void;
     }
 }

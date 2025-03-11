@@ -15,6 +15,7 @@ import PhotoDisplayModal from "../Components/Modals/PhotoModal";
 import TaskDetailHeroSection from "../Components/StructureComponents/TaskHeroSection";
 import { CommentRow } from "../Components/ElementComponents/CommentRow";
 import LoadingSpinnerBlock from "../Components/LoadingSpinnerBlock";
+import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
 
 const isDebugMode: boolean = false;
 const maxTagsPerTask: number = 10;
@@ -39,6 +40,7 @@ const TaskDetailsPage = () => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>(taskTags);
   const [isTagDataSyncing, setIsTagDataSyncing] = useState(false);
   const [comments, setComments] = useState<Comments[]>(commentsData?? []);
+  const [taskCommentsFetchMessage, setTaskCommentsFetchMessage] = useState<string>("");
   const [newComment, setNewComment] = useState("");
   const tagsToDeleteRef = useRef<number[]>([]);
 
@@ -51,15 +53,21 @@ const TaskDetailsPage = () => {
   //[[HOOKS]]
   //GET => FETCH QUERIES
   const {data: taskDetail} = useGetTasksRQ(
-    taskIdNumber, () => {
-      console.log(taskDetail?.data.data);
+    taskIdNumber, 
+    () => {
       setTaskDetailData(taskDetail?.data.data);
+    },
+    () => {
+
     }
   );
 
   const {data: tagsDataAll} = useGetTagsRQ(
     () => {
       setTagsData(tagsDataAll?.data.data);
+    },
+    () => {
+
     }
   );
 
@@ -67,12 +75,22 @@ const TaskDetailsPage = () => {
     taskIdNumber,
     () => {
       setSelectedTags(taskTagsData?.data.data);
+    },
+    () => {
+
     }
   );
 
-  const {data: taskComments} = useGetCommentsRQ(
-    taskIdNumber, () => {
+  const {data: taskComments, isLoading: taskCommentsLoading} = useGetCommentsRQ(
+    taskIdNumber, 
+    () => {
       setComments(taskComments?.data.data);
+      if(taskComments?.data.data.length < 1){
+        setTaskCommentsFetchMessage("No comments to show.");
+      }
+    },
+    () => {
+      setTaskCommentsFetchMessage("Failed to load comments.");
     }
   );
 
@@ -81,6 +99,9 @@ const TaskDetailsPage = () => {
     () => {
       setIsTagDataSyncing(false);
       queryClient.invalidateQueries(["tags", taskIdNumber]);
+    },
+    () => {
+
     }
   );
 
@@ -95,6 +116,9 @@ const TaskDetailsPage = () => {
     () => {
       setIsTagDataSyncing(false);
       queryClient.invalidateQueries(["tags", taskIdNumber]);
+    },
+    () => {
+
     }
   );
 
@@ -109,12 +133,18 @@ const TaskDetailsPage = () => {
     () => {
       setComments([...comments, { id: comments.length + 1, comment: newComment }]);
       setNewComment("");
+    },
+    () => {
+
     }
   );
 
   const {mutate: deleteCommentMutate} = useDeleteCommentsRQ(
     () => {
       queryClient.invalidateQueries(["comments", taskIdNumber]);
+    },
+    () => {
+      
     }
   );
 
@@ -196,7 +226,7 @@ const TaskDetailsPage = () => {
 
         {/* Task Tags */}
         <div className="h-[100px] gap-2 contain-content bg-white rounded-lg border-gray-100 border-2 mb-2">
-          {selectedTags && selectedTags.map((tag) => (
+          {selectedTags && selectedTags.length > 0 && selectedTags.map((tag) => (
             <div className="relative p-2 mr-1 mt-1 inline-block text-white bg-green-500 rounded-md" key={tag.id}>
               {tag.title}
               <BasicButton
@@ -213,7 +243,7 @@ const TaskDetailsPage = () => {
           {/* Tag Selection Button mode*/}
           {!selectTagMode && (
             <div className="w-9/10 h-[100px] contain-content gap-2 bg-white rounded-lg border-gray-100 border-2 mb-2 mr-2">
-              {tagsData && tagsData.map((tag) => (
+              {tagsData && tagsData.length > 0 && tagsData.map((tag) => (
                 <BasicButton
                   key = {tag.id}
                   buttonText={tag.title}
@@ -236,10 +266,10 @@ const TaskDetailsPage = () => {
                 </div>
               
                 <SelectTagInput
-                  tags={tagsData}
+                  tags={(tagsData && tagsData.length > 0)? tagsData: []}
                   id="tag"
                   name="tag"
-                  value={tagsData[0].id}
+                  value={(tagsData && tagsData.length > 0)? tagsData[0].id: 0}
                   onChange={handleChange}
                   className="mt-1 block w-1/2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
@@ -268,14 +298,12 @@ const TaskDetailsPage = () => {
       <div className="bg-white p-4 rounded-lg shadow">
         <h2 className="text-lg font-bold mb-2">Comments</h2>
         <ul className="space-y-2">
-          {comments && comments.map((comment) => (
-            <CommentRow
-              key={comment.id}
-              comment_id={comment.id}
-              commentText={comment.comment}
-              onDelete={() => deleteCommentMutate(comment.id)}
-            />
-          ))}
+          <TableDataBlock
+            dataList={comments}
+            isDataLoading={taskCommentsLoading}
+            dataFetchMessage={taskCommentsFetchMessage}
+            onDataDelete={(id: number) => deleteCommentMutate(id)}
+          />
         </ul>
 
         {/* Add Comment Form */}

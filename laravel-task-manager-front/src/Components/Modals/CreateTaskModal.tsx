@@ -1,6 +1,7 @@
 import { priority, statusEnum } from "../../Types&Enums/Enums";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCreateTaskRQ } from "../../Services/API/TaskApi";
+import { queryClient } from "../../Services/API/ApiInstance";
 
 const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     isOpen,
@@ -8,6 +9,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     onClose,
     onSubmit,
     onSuccess,
+    onFailure
 }) => {
 
   const[formData, setFormData] = useState<Task>({
@@ -15,7 +17,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     description: '',
     project_id: projects[0]?.id || 0,
     id: 0,
-    progress: 0,
     user_id: 1,
     status: statusEnum.active,
     priority: priority.normal,
@@ -23,22 +24,39 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   });
 
   const {mutate: createTaskMutate} = useCreateTaskRQ(
+    (responseData) => {
+      if(responseData.data.status === "success")
+      {
+        onSuccess(responseData.data.data);
+        queryClient.invalidateQueries(["tasks"]);
+        queryClient.invalidateQueries(["tasks", formData.project_id]);
+
+        setFormData({
+          title: '',
+          description: '',
+          project_id: projects[0]?.id || 0,
+          id: 0,
+          user_id: 1,
+          status: statusEnum.active,
+          priority: priority.normal,
+          end_Date: new Date(),
+        });
+      }
+      else{
+        onFailure();
+      }
+    },
     () => {
-      onSuccess(formData);
-      
-      setFormData({
-        title: '',
-        description: '',
-        project_id: projects[0]?.id || 0,
-        id: 0,
-        progress: 0,
-        user_id: 1,
-        status: statusEnum.active,
-        priority: priority.normal,
-        end_Date: new Date(),
-      });
+      onFailure();
     }
   );
+
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      project_id: projects[0]?.id | 0, // Set the first available project_id
+    }));
+  }, [projects]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const{name, value} = e.target;
@@ -53,6 +71,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     e.preventDefault();
     
     onSubmit();
+    console.log(formData);
     createTaskMutate(formData);
     onClose();
   }
@@ -63,7 +82,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       description: '',
       project_id: projects[0]?.id || 0,
       id: 0,
-      progress: 0,
       user_id: 1,
       status: statusEnum.active,
       priority: priority.normal,

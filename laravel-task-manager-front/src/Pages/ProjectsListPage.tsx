@@ -5,11 +5,12 @@ import { generateFakeProjects } from "../Utilities/FakeData";
 import { useGetProjectsRQ, useDeleteProjectRQ } from "../Services/API/ProjectApi";
 
 import ProjectListRow from "../Components/ElementComponents/ProjectListRow";
+import LoadingSpinner from "../Components/LoadingAnimationDiv";
 import BasicButton from "../Components/ElementComponents/BasicButton";
 import CreateProjectModal from "../Components/Modals/CreateProjectModal";
-import LoadingSpinner from "../Components/LoadingAnimationDiv";
 import NotificationPopUp from "../Components/Modals/NotificationPopUpModal";
 import LoadingModal from "../Components/Modals/LoadingContentModal";
+import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
 
 const isDebugMode:boolean = false;
 
@@ -21,18 +22,28 @@ if(isDebugMode){
 
 const ProjectsListPage = () => {
   const [projects, setProjects] = useState<Project[]>(isDebugMode? initialProjects : []);
+  const [projectsFetchMessage, setProjectsFetchMessage] = useState<string>("");
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [loadingContentOpen, setLoadingContentOpen] = useState(false);
   const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
 
-  const {data: projectList} = useGetProjectsRQ(
+  const {data: projectList, isLoading: isProjectsLoading} = useGetProjectsRQ(
     () => {
       setProjects(projectList?.data.data);
+      if(projectList?.data.data.length < 1){
+        setProjectsFetchMessage("No projects to show.");
+      }
+    },
+    () => {
+      setProjectsFetchMessage("Failed to Load projects.");
     }
   );
 
   const {mutate: deleteProjectMutate} = useDeleteProjectRQ(
+    () => {
+
+    },
     () => {
 
     }
@@ -45,28 +56,6 @@ const ProjectsListPage = () => {
   const openCreateProjectForm = () => {
     setIsCreateProjectOpen(true);
   };
-
-  //Not used in react-query mode
-  const onCreateProjectSubmit = (e: React.FormEvent, formData: Project) => {
-    e.preventDefault();
-
-    //calls api
-
-    setProjects((prevProjects) => ([
-      ...prevProjects,
-      {
-        id: formData.id,
-        title: formData.title,
-        description: formData.description,
-        progress: 0,
-        user_id: formData.user_id,
-        status: statusEnum.active,
-        end_Date: formData.end_Date,
-      }
-    ]));
-
-    setIsCreateProjectOpen(false);
-  }
 
   const onCreateProjectSubmitRQMode = () => {
     setLoadingContentOpen(true);
@@ -94,6 +83,10 @@ const ProjectsListPage = () => {
     }
   }
 
+  const onCreateProjectFailure = () => {
+
+  }
+
   const onProjectDelete = (project_id: number) => {
     setLoadingContentOpen(true);
     deleteProjectMutate(project_id);
@@ -117,6 +110,7 @@ const ProjectsListPage = () => {
         onClose = {() => setIsCreateProjectOpen(false)}
         onSubmit= {onCreateProjectSubmitRQMode}
         onSuccess={onCreateProjectSuccess}
+        onFailure={onCreateProjectFailure}
       />
 
       <NotificationPopUp
@@ -139,20 +133,13 @@ const ProjectsListPage = () => {
             </tr>
           </thead>
           <tbody>
-            {projects && projects.length > 0 ? (
-              projects.map((project) => (
-                <ProjectListRow key={project.id} 
-                  project={project} 
-                  onDelete={() => onProjectDelete(project.id)}
-                />
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4}>
-                  <LoadingSpinner/>
-                </td>
-              </tr>
-            )}
+            <TableDataBlock
+              isDataLoading={isProjectsLoading}  
+              dataFetchMessage={projectsFetchMessage}
+              dataList={projects}
+              noContentColSpan={3}
+              onDataDelete={(id: number) => onProjectDelete(id)}
+            />
           </tbody>
         </table>
       </div>

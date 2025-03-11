@@ -1,12 +1,14 @@
 import { priority, statusEnum } from "../../Types&Enums/Enums";
 import React, {useEffect, useState} from 'react';
 import { useCreateProjectRQ } from "../../Services/API/ProjectApi";
+import { queryClient } from "../../Services/API/ApiInstance";
 
 const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     isOpen,
     onClose,
     onSubmit,
     onSuccess,
+    onFailure
 }) => {
 
   const[formData, setFormData] = useState<Project>({
@@ -20,18 +22,29 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   });
 
   const {mutate: createProjectMutate} = useCreateProjectRQ(
-    () => {
-      onSuccess(formData);
+    (responseData) => {
+      if(responseData.data.status === "success")
+      {
+        onSuccess(responseData.data.data);
+        queryClient.invalidateQueries(["projects"]);
 
-      setFormData({
-        id: 0,
-        title: '',
-        description: '',
-        progress: 0,
-        user_id: 1,
-        status: statusEnum.active,
-        end_Date: new Date(),
-    });
+        setFormData({
+          id: 0,
+          title: '',
+          description: '',
+          progress: 0,
+          user_id: 1,
+          status: statusEnum.active,
+          end_Date: new Date(),
+        });
+      }
+      else{
+        onFailure();
+      }
+      
+    },
+    () => {
+      onFailure();
     }
   );
 
@@ -132,7 +145,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                 type="submit"
                 className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
               >
-                Create Task
+                Create Project
               </button>
             </div>
           </form>          

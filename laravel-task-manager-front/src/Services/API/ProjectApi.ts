@@ -15,7 +15,7 @@ export const getProjects = async (): Promise<AxiosResponse> => {
     }
 }
 
-export const useGetProjectsRQ = (onSuccessFn: () => void) => {
+export const useGetProjectsRQ = (onSuccessFn: () => void, onErrorFn: () => void) => {
     return useQuery({
         queryFn: getProjects,
         queryKey: ["projects"],
@@ -23,6 +23,9 @@ export const useGetProjectsRQ = (onSuccessFn: () => void) => {
         cacheTime: 30 * 1000,
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }
@@ -42,11 +45,14 @@ export const createProject = async (project: Project): Promise<AxiosResponse> =>
     }
 }
 
-export const useCreateProjectRQ = (onSuccessFn: () => void) => {
+export const useCreateProjectRQ = (onSuccessFn: (ApiResponse: any) => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: createProject,
-        onSuccess: () => {
-            onSuccessFn();
+        onSuccess: (data) => {
+            onSuccessFn(data);
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }
@@ -63,11 +69,14 @@ export const deleteProject = async (project_id: number): Promise<AxiosResponse> 
     }
 }
 
-export const useDeleteProjectRQ = (onSuccessFn: () => void) => {
+export const useDeleteProjectRQ = (onSuccessFn: () => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: deleteProject,
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }

@@ -4,7 +4,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 
 export const getComments = async (task_id: number): Promise<AxiosResponse> => {
     try{
-        const response = await api.get<ApiResponse<Comment[]>>(`comments/${task_id}`);
+        const response = await api.get<ApiResponse<Comment[]>>(`comments/${task_id}`, {timeout: 12 * 1000});
         
         return response;
     }
@@ -14,7 +14,7 @@ export const getComments = async (task_id: number): Promise<AxiosResponse> => {
     }
 }
 
-export const useGetCommentsRQ = (task_id: number, onSuccessFn: () => void) => { 
+export const useGetCommentsRQ = (task_id: number, onSuccessFn: () => void, onErrorFn: () => void) => { 
     return useQuery({
         queryFn: () => getComments(task_id),
         queryKey: ["comments", task_id],
@@ -23,6 +23,9 @@ export const useGetCommentsRQ = (task_id: number, onSuccessFn: () => void) => {
         refetchInterval: 60 * 1000,
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }
@@ -41,12 +44,15 @@ export const addComment = async (task_id: number, comment: string): Promise<Axio
     }
 }
 
-export const useAddCommentsRQ = (onSuccessFn: () => void) => {
+export const useAddCommentsRQ = (onSuccessFn: () => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: ({task_id, comment}: {task_id: number, comment: string}) => addComment(task_id, comment),
         onSuccess: () => {
             onSuccessFn();
         },
+        onError: () => {
+            onErrorFn();
+        }
     });
 }
 
@@ -62,11 +68,14 @@ export const deleteComment = async (comment_id: number): Promise<AxiosResponse> 
     }
 }
 
-export const useDeleteCommentsRQ = (onSuccessFn: () => void) => {
+export const useDeleteCommentsRQ = (onSuccessFn: () => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: deleteComment,
         onSuccess: () => {
             onSuccessFn();
         },
+        onError: () => {
+            onErrorFn();
+        }
     });
 }

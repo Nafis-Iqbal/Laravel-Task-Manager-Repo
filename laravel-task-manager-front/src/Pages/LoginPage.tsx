@@ -13,7 +13,7 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [name, setName] = useState(''); // For registration
+  const [name, setName] = useState('Guest'); // For registration
   const navigate = useNavigate(); // Updated to useNavigate
 
   const dispatch = useAuthDispatch();

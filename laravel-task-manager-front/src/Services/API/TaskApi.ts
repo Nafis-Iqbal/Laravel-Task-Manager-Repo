@@ -7,27 +7,24 @@ import {role, statusEnum, priority} from "../../Types&Enums/Enums";
 const getTasks = async (task_id?: number): Promise<AxiosResponse> => {
     try{
         let response;
-        console.log("fuked");
+        
         if(task_id)
         {
             response = await api.get<ApiResponse<Task[]>>(`tasks/${task_id}`);
-            console.log("really");
-            console.log(response);
         }
         else{
-            console.log("wth");
             response = await api.get<ApiResponse<Task[]>>("tasks");
         }
         
         return response;
     }
     catch(error){
-        console.log("error fetching tasks");
+        console.log("Error fetching tasks");
         throw error;
     }
 }
 
-export const useGetTasksRQ = (task_id: number | undefined, onSuccessFn: () => void, 
+export const useGetTasksRQ = (task_id: number | undefined, onSuccessFn: () => void, onErrorFn: () => void,
 cacheTimer: number = 8 * 1000, staleTimer: number = 7 * 1000, refetchInterval: number = 60 * 1000) => {
     return useQuery({
         queryKey: task_id? ["tasks", task_id] : ["tasks"],
@@ -38,13 +35,15 @@ cacheTimer: number = 8 * 1000, staleTimer: number = 7 * 1000, refetchInterval: n
         onSuccess: () => {
             onSuccessFn();
         },
+        onError: () => {
+            onErrorFn();
+        },
         enabled: true
     });
 }
 
 export const getTasksByProject = async (project_id: number): Promise<AxiosResponse> => {
     try{
-        console.log("kaha gayi");
         const response = api.get<AxiosResponse<Task[]>>(`tasks/project/${project_id}`);
 
         return response;
@@ -55,7 +54,7 @@ export const getTasksByProject = async (project_id: number): Promise<AxiosRespon
     }
 }
 
-export const useGetTasksByProjectRQ = (project_id: number, onSuccessFn: () => void) => {
+export const useGetTasksByProjectRQ = (project_id: number, onSuccessFn: () => void, onErrorFn: () => void) => {
     return useQuery({
         queryFn: () => getTasksByProject(project_id),
         queryKey: ["task/projects", project_id],
@@ -63,6 +62,9 @@ export const useGetTasksByProjectRQ = (project_id: number, onSuccessFn: () => vo
         cacheTime: 30 * 1000,
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }
@@ -81,12 +83,15 @@ export const createTask = async (task: Task): Promise<AxiosResponse> => {
     }
 }
 
-export const useCreateTaskRQ = (onSuccessFn: () => void) => {
+export const useCreateTaskRQ = (onSuccessFn: (ApiResponse: any) => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: createTask,
-        onSuccess: () => {
-            onSuccessFn();
+        onSuccess: (data) => {
+            onSuccessFn(data);
         },
+        onError: () => {
+            onErrorFn();
+        }
     });
 }
 
@@ -102,11 +107,14 @@ export const deleteTask = async (task_id: number): Promise<AxiosResponse> => {
     }
 }
 
-export const useDeleteTaskRQ = (onSuccessFn: () => void) => {
+export const useDeleteTaskRQ = (onSuccessFn: () => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: deleteTask,
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }
@@ -124,7 +132,7 @@ export const getTaskTags = async (task_id: number): Promise<AxiosResponse> => {
     }
 }
 
-export const useGetTaskTagsRQ = (task_id: number, onSuccessFn: () => void) => {
+export const useGetTaskTagsRQ = (task_id: number, onSuccessFn: () => void, onErrorFn: () => void) => {
     return useQuery({
         queryKey: ["tags", task_id],
         queryFn: () => getTaskTags(task_id),
@@ -132,6 +140,9 @@ export const useGetTaskTagsRQ = (task_id: number, onSuccessFn: () => void) => {
         cacheTime: 30 * 1000,
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         },
         enabled: true
     });
@@ -152,11 +163,14 @@ export const addTaskTags = async (task_id: number, task_tags: number[]): Promise
     }
 }
 
-export const useAddTaskTags = (onSuccessFn: () => void) => {
+export const useAddTaskTags = (onSuccessFn: () => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: ({task_id, task_tags} : {task_id: number, task_tags: number[]}) => addTaskTags(task_id, task_tags),
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }
@@ -176,11 +190,14 @@ export const deleteTaskTags = async (task_id: number, task_tags: number[]): Prom
     }
 }
 
-export const useDeleteTaskTags = (onSuccessFn: () => void) => {
+export const useDeleteTaskTags = (onSuccessFn: () => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: ({task_id, task_tags} : {task_id: number, task_tags: number[]}) => deleteTaskTags(task_id, task_tags),
         onSuccess: () => {
             onSuccessFn();
+        },
+        onError: () => {
+            onErrorFn();
         }
     });
 }

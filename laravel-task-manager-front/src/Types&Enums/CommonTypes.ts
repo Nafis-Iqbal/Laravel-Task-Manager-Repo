@@ -12,9 +12,9 @@ declare global{
         id: number;
         title: string;
         description: string;
-        progress: number;
         user_id: number;
         status: statusEnum;
+        progress: number;
         start_Date?: Date;
         end_Date: Date;
     }
@@ -23,7 +23,6 @@ declare global{
         id: number;
         title: string;
         description: string;
-        progress: number;
         user_id: number;
         project_id: number;
         priority: priority;
@@ -52,4 +51,20 @@ declare global{
         auth_token: string;
         user_id: number; 
     }
+}
+
+export function isTaskArray(data: any[]): data is Task[] {
+    return Array.isArray(data) && data.every((item) => 'project_id' in item && 'priority' in item);
+}
+
+export function isProjectArray(data: any[]): data is Project[] {
+    return Array.isArray(data) && data.every((item) => 'progress' in item);
+}
+
+export function isCommentArray(data: any[]): data is Comments[] {
+    return Array.isArray(data) && data.every((item) => 'comment' in item);
+}
+
+export function isTagArray(data: any[]): data is Tag[] {
+    return Array.isArray(data) && data.every((item) => !('comment' in item) && !('progress' in item) && !('project_id' in item && 'priority' in item));
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import BarChart from '../../Utilities/Barchart';
 
-const HeroSection: React.FC = () => {
+const ProfileHeroSection: React.FC = () => {
   const taskStats = { completed: 10, ongoing: 5 }; // Example data
   const projectStats = { completed: 7, ongoing: 3 }; // Example data
 
@@ -22,4 +22,4 @@ const HeroSection: React.FC = () => {
   );
 };
 
-export default HeroSection;
+export default ProfileHeroSection;

@@ -6,11 +6,12 @@ import { useGetProjectsRQ } from "../Services/API/ProjectApi";
 import { queryClient } from "../Services/API/ApiInstance";
 
 import TaskListRow from "../Components/ElementComponents/TaskListRow";
-import BasicButton from "../Components/ElementComponents/BasicButton";
 import LoadingSpinner from "../Components/LoadingAnimationDiv";
+import BasicButton from "../Components/ElementComponents/BasicButton";
 import CreateTaskModal from "../Components/Modals/CreateTaskModal";
 import NotificationPopUp from "../Components/Modals/NotificationPopUpModal";
 import LoadingModal from "../Components/Modals/LoadingContentModal";
+import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
 
 const isDebugMode:boolean = false;
 
@@ -24,34 +25,46 @@ if(isDebugMode){
 
 const TasksListPage = () => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks ?? []);
-  const [loadingContentOpen, setLoadingContentOpen] = useState(false);
+  const [tasksFetchMessage, setTasksFetchMessage] = useState<string>("");
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const [loadingContentOpen, setLoadingContentOpen] = useState(false);
   const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState<string>("");
 
   const projectsData = useRef<ProjectData[]>([]);
   
-  const { data: tasksList } = useGetTasksRQ(
-    undefined, () => {
+  const { data: tasksList , isLoading: isTasksLoading} = useGetTasksRQ(
+    undefined, 
+    () => {
       setTasks(tasksList?.data.data);
+      if(tasksList?.data.data.length < 1){
+        setTasksFetchMessage("No tasks to show.");
+      }
+    },
+    () => {
+      setTasksFetchMessage("Failed to Load tasks.");
     }
   );
 
   const {data: projectsDataResult} = useGetProjectsRQ(
     () => {
-      console.log("bichi");
       projectsData.current = projectsDataResult?.data.data;
-      console.log(projectsDataResult?.data.data);
-      console.log(projectsData.current);
+    },
+    () => {
+
     }
   );
 
   const {mutate: deleteTaskMutate} = useDeleteTaskRQ(
     () => {
       setLoadingContentOpen(false);
-      setNotificationPopupOpen(true);
-      setNotificationMessage("Task deleted successfully.");
+      openNotificationPopUpMessage("Task deleted successfully.");
+
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+    () => {
+      setLoadingContentOpen(false);
+      openNotificationPopUpMessage("Failed to delete task. Try again");
     }
   );
 
@@ -59,71 +72,29 @@ const TasksListPage = () => {
     setTasks(tasksList?.data.data);
   }, [tasksList]);
 
+  useEffect(() => {
+    projectsData.current = projectsDataResult?.data.data;
+  }, [projectsDataResult])
+
   const openCreateTaskForm = () => {
     setIsCreateTaskOpen(true);
   }
 
-  //Not used with react-query
-  const OnCreateTaskSubmit = (e: React.FormEvent, formData: Task) => {
-    e.preventDefault();
-
-    const createNewTaskApiCall = async () => {
-      try{
-        setLoadingContentOpen(true);
-        const response = await createTask(formData);
-        
-        if(response.data?.status === "success"){
-          setNotificationPopupOpen(true);
-
-          if(tasks)
-          {
-            setTasks((prevTasks) => [
-              ...prevTasks,
-              {
-                id: prevTasks.length + 2, // Generate a new task ID
-                title: formData.title,
-                description: formData.description,
-                project_id: formData.project_id,
-                priority: formData.priority,
-                status: formData.status, // Default status
-                progress: 0, // Default progress value
-                user_id: 1, // Example, assuming you have a static user_id or get it dynamically
-                start_Date: new Date(), // Default to the current date
-                end_Date: formData.end_Date, // From the form data
-              }
-            ]);
-          }
-        }
-      }
-      catch(error)
-      {
-        console.log("Error creating new task inside component");
-      }
-      finally{
-        setLoadingContentOpen(false);
-      }
-    }
-
-    createNewTaskApiCall();
-
-    setIsCreateTaskOpen(false);
-  };
-
-  const OnCreateTaskSubmitRQMode = () => {
+  const OnCreateTaskSubmit = () => {
     setLoadingContentOpen(true);
   }
 
   const onCreateTaskSuccess = (formData: Task) => {
     setLoadingContentOpen(false);
-    setNotificationPopupOpen(true);
-    setNotificationMessage("Task created successfully!");
+
+    openNotificationPopUpMessage("Task created successfully!");
 
     if(tasks)
     {
       setTasks((prevTasks) => [
         ...prevTasks,
         {
-          id: prevTasks.length + 2, // Generate a new task ID
+          id: formData.id, // Generate a new task ID
           title: formData.title,
           description: formData.description,
           project_id: formData.project_id,
@@ -138,9 +109,19 @@ const TasksListPage = () => {
     }
   }
 
+  const onCreateTaskFailure = () => {
+    setLoadingContentOpen(false);
+    openNotificationPopUpMessage("Error creating task!");
+  }
+
   const onTaskDelete = (task_id: number) => {
     setLoadingContentOpen(true);
     deleteTaskMutate(task_id);
+  }
+
+  const openNotificationPopUpMessage = (popUpMessage: string) => {
+    setNotificationPopupOpen(true);
+    setNotificationMessage(popUpMessage);
   }
   
   return (
@@ -160,8 +141,9 @@ const TasksListPage = () => {
         isOpen = {isCreateTaskOpen}
         projects = {projectsData.current? Object.values(projectsData.current).map(({id, title}) => ({id, title})) : []}
         onClose={() => setIsCreateTaskOpen(false)}
-        onSubmit={OnCreateTaskSubmitRQMode}
+        onSubmit={OnCreateTaskSubmit}
         onSuccess={onCreateTaskSuccess}
+        onFailure={onCreateTaskFailure}
       />
 
       <NotificationPopUp
@@ -185,17 +167,13 @@ const TasksListPage = () => {
             </tr>
           </thead>
           <tbody>
-            {tasks && tasks.length > 0 ? (
-              tasks.map((task) => (
-                <TaskListRow key={task.id} task={task} onDelete={onTaskDelete}/>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4}>
-                  <LoadingSpinner/>
-                </td>
-              </tr>
-            )}
+            <TableDataBlock
+              dataList={tasks}
+              dataFetchMessage={tasksFetchMessage}
+              onDataDelete={(id: number) => onTaskDelete(id)}
+              isDataLoading={isTasksLoading}
+              noContentColSpan={4}
+            />
           </tbody>
         </table>
       </div>
