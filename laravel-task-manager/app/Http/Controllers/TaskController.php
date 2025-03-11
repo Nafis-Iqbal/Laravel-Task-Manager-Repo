@@ -38,7 +38,8 @@ class TaskController extends Controller
             $task->save();
             return response()->json([
                 'message' => 'Task created successfully',
-                'status' => 'success'
+                'status' => 'success',
+                'data' => $task
             ]);
         } catch (QueryException $q) {
             return response()->json([
@@ -185,7 +186,7 @@ class TaskController extends Controller
             $task->save();
 
             return response()->json([
-                'message' => 'Task updated successfully',
+                'message' => 'Task tags updated successfully',
                 'status' => 'success',
             ], 200);
         } else {
@@ -223,7 +224,7 @@ class TaskController extends Controller
             $task->save();
 
             return response()->json([
-                'message' => 'Task updated successfully',
+                'message' => 'Task tags updated successfully',
                 'status' => 'success',
             ], 200);
         } else {
@@ -249,7 +250,7 @@ class TaskController extends Controller
             $tags = $task->tags;
 
             return response()->json([
-                'message' => 'Tags retrieved successfully',
+                'message' => 'Task tags retrieved successfully',
                 'status' => 'success',
                 'data' => $tags
             ], 200);

@@ -31,18 +31,20 @@ class TagController extends Controller
 
         return response()->json([
             'message' => 'Tag created successfully',
-            'status' => 'success'
+            'status' => 'success',
+            'data' => $tag
         ]);
     }
 
-    public function updateTag(Request $request, $id)
+    public function updateTag(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|min:3|max:10|unique:tags,title'
+            'title' => 'required|min:3|max:10|unique:tags,title',
+            'id' => 'required|numeric',
         ]);
 
         try {
-            $tag = Tag::findOrFail($id);
+            $tag = Tag::findOrFail($validatedData['id']);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Tag not found.',
@@ -58,7 +60,7 @@ class TagController extends Controller
         ]);
     }
 
-    public function deleteTag($id)
+    public function deleteTag(Request $request, $id)
     {
         try {
             $tag = Tag::findOrFail($id);

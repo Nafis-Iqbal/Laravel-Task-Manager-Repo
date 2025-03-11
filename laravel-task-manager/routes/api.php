@@ -50,7 +50,7 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
 
     Route::get('tags', [TagController::class, 'getTags'])->name('tag.index');
     Route::post('tags/create', [TagController::class, 'createTag'])->name('tag.create');
-    Route::put('tags/update/{id}', [TagController::class, 'updateTag'])->name('tag.update');
+    Route::put('tags/update', [TagController::class, 'updateTag'])->name('tag.update');
     Route::delete('tags/delete/{id}', [TagController::class, 'deleteTag'])->name('tag.delete');
 
     Route::get('comments/{task_id}', [CommentController::class, 'getComments'])->name('task.comments');

@@ -25,12 +25,14 @@ class ProjectController extends Controller
 
         $project->user_id = $user->id;
         $project->status = 'active';
+        $project->progress = 0;
 
         $project->save();
 
         return response()->json([
             'message' => 'Project created successfully!',
-            'status' => 'success'
+            'status' => 'success',
+            'data' => $project
         ], 201);
     }
 
@@ -77,7 +79,8 @@ class ProjectController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|min:4|max:20|unique:projects,title',
             'description' => 'required|string|max:100',
-            'status' => 'required|in:active,completed,paused,cancelled'
+            'status' => 'required|in:active,completed,paused,cancelled',
+            'progress' => 'integer|min:0|max:100'
         ]);
 
         try {
