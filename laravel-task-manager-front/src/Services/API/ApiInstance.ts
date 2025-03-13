@@ -4,10 +4,13 @@ import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient();
 
+//const apiBaseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const apiBaseURL = 'https://laravel-task-manager-5fc2b1b299f3.herokuapp.com/api';
+//const apiBaseURL = 'http://localhost:8000/api';
+
 // Create Axios instance with default config
 const api = axios.create({
-  //baseURL: 'https://laravel-task-manager-5fc2b1b299f3.herokuapp.com/api',
-  baseURL: 'http://localhost:8000/api',
+  baseURL: apiBaseURL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
