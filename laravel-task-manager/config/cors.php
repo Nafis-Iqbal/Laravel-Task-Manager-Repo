@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://taskmanagerdemo.vercel.app', 'http://localhost:3000', 'https://taskmanagerdemo-9px48wduz-nafis-projects-bda2e816.vercel.app/'],
+    'allowed_origins' => [env('CORS_ALLOW_URL_LOCAL'), env('CORS_ALLOW_URL_DEPLOY_1')],
 
     'allowed_origins_patterns' => [],
 
