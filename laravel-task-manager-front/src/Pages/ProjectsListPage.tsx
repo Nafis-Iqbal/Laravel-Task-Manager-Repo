@@ -29,6 +29,7 @@ const ProjectsListPage = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
 
   const {data: projectList, isLoading: isProjectsLoading} = useGetProjectsRQ(
+    undefined,
     () => {
       setProjects(projectList?.data.data);
       if(projectList?.data.data.length < 1){
@@ -43,14 +44,16 @@ const ProjectsListPage = () => {
   const {mutate: deleteProjectMutate} = useDeleteProjectRQ(
     () => {
 
+      setLoadingContentOpen(false);
     },
     () => {
-
+      setLoadingContentOpen(false);
     }
   );
 
   useEffect(() => {
     setProjects(projectList?.data.data);
+    setLoadingContentOpen(false);
   }, [projectList]);
 
   const openCreateProjectForm = () => {
@@ -77,7 +80,7 @@ const ProjectsListPage = () => {
           progress: 0,
           user_id: formData.user_id,
           status: statusEnum.active,
-          end_Date: formData.end_Date,
+          end_date: formData.end_date,
         }
       ]));
     }
@@ -94,8 +97,8 @@ const ProjectsListPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 min-h-screen bg-gray-100 rounded-lg shadow-md">
-      <div className="flex justify-between bg-gray-200">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Projects List</h1>
+      <div className="flex justify-between bg-gray-200 mt-2 rounded-t-md">
+        <h1 className="text-2xl font-bold text-gray-800 my-2 ml-3">Projects List</h1>
         <BasicButton
           buttonText="Create New Project"
           buttonColor="green-500"
@@ -144,7 +147,7 @@ const ProjectsListPage = () => {
         </table>
       </div>
 
-      <div className="flex justify-end p4 bg-gray-200">
+      <div className="flex justify-end p4 bg-gray-200 rounded-b-md">
       <BasicButton
           buttonText="Create New Project"
           buttonColor="green-500"

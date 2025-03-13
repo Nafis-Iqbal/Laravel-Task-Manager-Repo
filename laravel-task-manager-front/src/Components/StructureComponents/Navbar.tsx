@@ -2,22 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLogout } from '../../Hooks/UtilHooks';
 
-import { useAuthDispatch } from "../../Hooks/StateHooks";
-import { logout } from "../../ContextAPIs/AuthSlice";
-import { useNavigate } from "react-router-dom";
-
 const Navbar: React.FC = () => {
   const logoutG = useLogout();
+  const fun = () => {
+    console.log("fg");
+  }
 
   return (
     <nav className="bg-gray-800 text-white p-4">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <div className="text-lg font-bold">
+      <div className="flex justify-between items-center">
+        <div className="text-4xl font-bold ml-5">
           <Link to="/dashboard" className="hover:text-gray-300">
             Task Manager
           </Link>
         </div>
-        <div className="space-x-4">
+        <div className="space-x-8 mr-5 text-2xl">
           <Link to="/dashboard" className="hover:text-gray-300">
             Dashboard
           </Link>
@@ -30,12 +29,12 @@ const Navbar: React.FC = () => {
           <Link to="/profile" className="hover:text-gray-300">
             Profile
           </Link>
-          <button onClick={logoutG} className="hover:text-gray-300">
+          <button onClick={() => {
+            console.log("bichi");
+            logoutG();
+          }} className="hover:text-gray-300">
             Logout
           </button>
-          {/* <Link to="/login" className="hover:text-gray-300">
-            Logout
-          </Link> */}
         </div>
       </div>
     </nav>

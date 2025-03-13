@@ -5,7 +5,7 @@ import { Plus, X, Image } from "lucide-react";
 import { generateFakeComments, generateFakeTags } from "../Utilities/FakeData";
 import debounce from "lodash/debounce";
 import { queryClient } from "../Services/API/ApiInstance";
-import { useGetTasksRQ, useGetTaskTagsRQ, useAddTaskTags, useDeleteTaskTags } from "../Services/API/TaskApi";
+import { useGetTasksRQ, useGetTaskTagsRQ, useUpdateTaskRQ, useAddTaskTags, useDeleteTaskTags } from "../Services/API/TaskApi";
 import { useAddCommentsRQ, useDeleteCommentsRQ, useGetCommentsRQ } from "../Services/API/CommentApi";
 import { useGetTagsRQ } from "../Services/API/TagApi";
 
@@ -13,9 +13,9 @@ import SelectTagInput from "../Components/ElementComponents/SelectInput";
 import BasicButton from "../Components/ElementComponents/BasicButton";
 import PhotoDisplayModal from "../Components/Modals/PhotoModal";
 import TaskDetailHeroSection from "../Components/StructureComponents/TaskHeroSection";
-import { CommentRow } from "../Components/ElementComponents/CommentRow";
 import LoadingSpinnerBlock from "../Components/LoadingSpinnerBlock";
 import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
+import { priority, statusEnum } from "../Types&Enums/Enums";
 
 const isDebugMode: boolean = false;
 const maxTagsPerTask: number = 10;
@@ -35,17 +35,22 @@ if(isDebugMode){
 
 const TaskDetailsPage = () => {
   const [taskDetailData, setTaskDetailData] = useState<Task>();
+  const [isTaskStatusSyncing, setIsTaskStatusSyncing] = useState(false);
+
   const [selectTagMode, setSelectTagMode] = useState(false);
   const [tagsData, setTagsData] = useState<Tag[]>(initialTagsData);
   const [selectedTags, setSelectedTags] = useState<Tag[]>(taskTags);
   const [isTagDataSyncing, setIsTagDataSyncing] = useState(false);
+  
   const [comments, setComments] = useState<Comments[]>(commentsData?? []);
   const [taskCommentsFetchMessage, setTaskCommentsFetchMessage] = useState<string>("");
   const [newComment, setNewComment] = useState("");
-  const tagsToDeleteRef = useRef<number[]>([]);
+  const [isAddCommentSyncing, setIsAddCommentSyncing] = useState(false);
 
   const [isShowPhotoOpen, setIsShowPhotoOpen] = useState(false);
   const [images, setImages] = useState<string[]>(imageFiles);
+  
+  const tagsToDeleteRef = useRef<number[]>([]);
 
   const {taskId} = useParams();
   const taskIdNumber = Number(taskId);
@@ -59,6 +64,20 @@ const TaskDetailsPage = () => {
     },
     () => {
 
+    }
+  );
+
+  const {mutate: updateTaskMutate} = useUpdateTaskRQ(
+    (responseData) => {
+      if(responseData.data.status === "success"){
+        queryClient.invalidateQueries(["tasks", taskIdNumber]);
+        queryClient.invalidateQueries(["tasks"]);
+      }
+
+      setIsTaskStatusSyncing(false);
+    },
+    () =>{
+      setIsTaskStatusSyncing(false);
     }
   );
 
@@ -133,9 +152,12 @@ const TaskDetailsPage = () => {
     () => {
       setComments([...comments, { id: comments.length + 1, comment: newComment }]);
       setNewComment("");
+
+      queryClient.invalidateQueries(["comments", taskIdNumber]);
+      setIsAddCommentSyncing(false);
     },
     () => {
-
+      setIsAddCommentSyncing(false);
     }
   );
 
@@ -187,10 +209,11 @@ const TaskDetailsPage = () => {
     if (!newComment.trim() || isLoading) return;
 
     addTaskCommentMutate({task_id: taskIdNumber, comment: newComment});
+    setIsAddCommentSyncing(true);
   };
 
   //For Tag selection Select Input mode
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTagSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if(selectedTags.length < maxTagsPerTask)
     {
       if(selectedTags.some(tagM => tagM.id === Number(e.target.value)) === false)
@@ -203,6 +226,24 @@ const TaskDetailsPage = () => {
         ]));
       }
     }
+  };
+
+  const handleTaskPriorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setIsTaskStatusSyncing(true);
+
+    updateTaskMutate({
+      ...taskDetailData,
+      priority: e.target.value as priority
+    } as Task);
+  };
+
+  const handleTaskStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setIsTaskStatusSyncing(true);
+
+    updateTaskMutate({
+      ...taskDetailData,
+      status: e.target.value as statusEnum
+    } as Task);
   };
 
   return (
@@ -219,6 +260,55 @@ const TaskDetailsPage = () => {
       {/* Header */}
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Task Details</h1>
 
+      <div className="flex flex-col bg-white p-4 rounded-lg shadow mb-4">
+        <div className="flex justify-between">
+          <div className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Task Actions</div>
+
+          {isTaskStatusSyncing? (
+            <LoadingSpinnerBlock isOpen={true} customStyle="w-10"/>
+          ) : (
+            <div className="w-8"></div>
+          )}
+        </div>
+
+        <div className="flex space-x-3">
+          <div className="flex items-center w-1/2 bg-gray-300 rounded-lg space-x-1 px-2 py-1">
+            <div className="w-1/3 p-2 bg-gray-50 text-green-700 font-semibold rounded-md">Switch Priority</div>
+
+            <select
+              id="priority"
+              name="priority"
+              value={taskDetailData?.priority}
+              onChange={handleTaskPriorityChange}
+              className="block w-1/3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value={priority.normal}>Normal</option>
+              <option value={priority.urgent}>Urgent</option>
+            </select>
+
+            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{taskDetailData?.priority}</div>
+          </div>
+
+          <div className="flex items-center w-1/2 bg-gray-300 rounded-lg space-x-1 px-2 py-1">
+            <div className="w-1/3 p-2 bg-gray-100 text-green-700 font-semibold rounded-md">Update Status</div>
+
+            <select
+              id="project_id"
+              name="project_id"
+              value={taskDetailData?.status}
+              onChange={handleTaskStatusChange}
+              className="block w-1/3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value={statusEnum.active}>Active</option>
+              <option value={statusEnum.paused}>Paused</option>
+              <option value={statusEnum.completed}>Completed</option>
+              <option value={statusEnum.cancelled}>Cancelled</option>
+            </select>
+
+            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{taskDetailData?.status}</div>
+          </div>
+        </div>
+      </div>
 
       <div className="flex flex-col bg-white p-4 rounded-lg shadow mb-4">
         {/* Task Tags Header */}
@@ -270,7 +360,7 @@ const TaskDetailsPage = () => {
                   id="tag"
                   name="tag"
                   value={(tagsData && tagsData.length > 0)? tagsData[0].id: 0}
-                  onChange={handleChange}
+                  onChange={handleTagSelectChange}
                   className="mt-1 block w-1/2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
@@ -296,15 +386,23 @@ const TaskDetailsPage = () => {
 
       {/* Comments Section */}
       <div className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-lg font-bold mb-2">Comments</h2>
-        <ul className="space-y-2">
-          <TableDataBlock
-            dataList={comments}
-            isDataLoading={taskCommentsLoading}
-            dataFetchMessage={taskCommentsFetchMessage}
-            onDataDelete={(id: number) => deleteCommentMutate(id)}
-          />
-        </ul>
+        <h2 className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Comments</h2>
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody className="space-y-2">
+            <TableDataBlock
+              dataList={comments}
+              isDataLoading={taskCommentsLoading}
+              dataFetchMessage={taskCommentsFetchMessage}
+              noContentColSpan={2}
+              onDataDelete={(id: number) => deleteCommentMutate(id)}
+            />
+          </tbody>
+        </table>
 
         {/* Add Comment Form */}
         <form onSubmit={handleAddComment} className="mt-4 flex gap-2">
@@ -315,6 +413,13 @@ const TaskDetailsPage = () => {
             placeholder="Add a comment..."
             className="flex-1 p-2 border rounded-md"
           />
+
+          {isAddCommentSyncing? (
+            <LoadingSpinnerBlock isOpen={true} customStyle="w-8"/>
+          ) : (
+            <div className="w-8"></div>
+          )}
+          
           <button
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"

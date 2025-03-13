@@ -20,7 +20,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     user_id: 1,
     status: statusEnum.active,
     priority: priority.normal,
-    end_Date: new Date(),
+    end_date: new Date(),
   });
 
   const {mutate: createTaskMutate} = useCreateTaskRQ(
@@ -39,7 +39,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
           user_id: 1,
           status: statusEnum.active,
           priority: priority.normal,
-          end_Date: new Date(),
+          end_date: new Date(),
         });
       }
       else{
@@ -60,7 +60,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const{name, value} = e.target;
-
+    console.log(value)
     setFormData((prevData) => ({
       ...prevData,
       [name]: name === 'end_Date' ? new Date(value) : value,
@@ -85,7 +85,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       user_id: 1,
       status: statusEnum.active,
       priority: priority.normal,
-      end_Date: new Date(),
+      end_date: new Date(),
     });
 
     onClose();
@@ -176,7 +176,8 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 type="date"
                 id="end_Date"
                 name="end_Date"
-                value={formData.end_Date.toISOString().split('T')[0]} // Convert Date to yyyy-mm-dd
+                //value={formData.end_Date.toISOString()} 
+                value={formData.end_date.toISOString().split('T')[0]} // Convert Date to yyyy-mm-dd
                 onChange={handleChange}
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               />

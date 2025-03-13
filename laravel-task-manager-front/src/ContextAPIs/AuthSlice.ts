@@ -28,6 +28,8 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user_id = null;
       state.token = null;
+      sessionStorage.removeItem('auth_token');
+      sessionStorage.setItem('isAuthenticated', "false");
     },
   },
 });

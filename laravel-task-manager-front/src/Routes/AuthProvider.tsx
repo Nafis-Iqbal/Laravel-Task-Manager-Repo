@@ -3,7 +3,8 @@ import { useAuthSelector } from "../Hooks/StateHooks"; // Update path as needed
 import React from "react";
 
 const RequireAuth = ({ children }: { children: React.JSX.Element }) => {
-  const isAuthenticated = useAuthSelector((state) => state.auth.isAuthenticated);
+  //const isAuthenticated = useAuthSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true'; // Ensure it returns a boolean
   const location = useLocation();
 
   if (!isAuthenticated) {

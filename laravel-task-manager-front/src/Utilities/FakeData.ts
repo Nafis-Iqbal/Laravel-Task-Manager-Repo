@@ -34,8 +34,8 @@ export const generateFakeTask = (existingTaskIds: Set<number>, totalTasks: numbe
     project_id: faker.number.int({ min: 1, max: 5 }),
     priority: faker.helpers.enumValue(priority),
     status: faker.helpers.enumValue(statusEnum),
-    start_Date: faker.date.past(),
-    end_Date: faker.date.future(),
+    start_date: faker.date.past(),
+    end_date: faker.date.future(),
   };
 };
 
@@ -63,8 +63,8 @@ export const generateFakeProject = (existingProjectIds: Set<number>, totalProjec
     progress: faker.number.int({ min: 0, max: 100 }),
     user_id: faker.number.int({ min: 1, max: 5 }),
     status: faker.helpers.enumValue(statusEnum),
-    start_Date: faker.date.past(),
-    end_Date: faker.date.future(),
+    start_date: faker.date.past(),
+    end_date: faker.date.future(),
   };
 };
 

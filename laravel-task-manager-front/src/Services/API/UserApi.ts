@@ -44,10 +44,10 @@ export const createUser = async (name: string, email: string, password: string, 
 
 export const loginUser = async (email: string, password: string): Promise<AxiosResponse> => {
     try{
-        const response = await api.post<ApiResponse<Auth>>("login", {
+        const response = await api.post("login", {
             email, password
         });
-        console.log(response.data);
+        
         return response;
     }
     catch(error)

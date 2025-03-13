@@ -1,4 +1,4 @@
-import api from './ApiInstance';
+import api, { queryClient } from './ApiInstance';
 import { AxiosResponse } from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
 

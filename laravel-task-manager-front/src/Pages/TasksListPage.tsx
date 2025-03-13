@@ -47,6 +47,7 @@ const TasksListPage = () => {
   );
 
   const {data: projectsDataResult} = useGetProjectsRQ(
+    undefined,
     () => {
       projectsData.current = projectsDataResult?.data.data;
     },
@@ -70,6 +71,7 @@ const TasksListPage = () => {
 
   useEffect(() => {
     setTasks(tasksList?.data.data);
+    setLoadingContentOpen(false);
   }, [tasksList]);
 
   useEffect(() => {
@@ -102,8 +104,8 @@ const TasksListPage = () => {
           status: formData.status, // Default status
           progress: 0, // Default progress value
           user_id: 1, // Example, assuming you have a static user_id or get it dynamically
-          start_Date: new Date(), // Default to the current date
-          end_Date: formData.end_Date, // From the form data
+          start_date: new Date(), // Default to the current date
+          end_date: formData.end_date, // From the form data
         }
       ]);
     }
@@ -126,8 +128,8 @@ const TasksListPage = () => {
   
   return (
     <div className="max-w-4xl min-h-screen mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
-      <div className="flex justify-between items-center rounded-md p4 bg-gray-200">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4 ml-2">Tasks List</h1>
+      <div className="flex justify-between items-center rounded-t-md p4 bg-gray-200">
+        <h1 className="text-2xl font-bold text-gray-800 my-2 ml-3">Tasks List</h1>
         <BasicButton
           buttonText="Create New Task"
           buttonColor="green-500"
@@ -178,7 +180,7 @@ const TasksListPage = () => {
         </table>
       </div>
 
-      <div className="flex justify-end p4 bg-gray-200 rounded-md">
+      <div className="flex justify-end p4 bg-gray-200 rounded-b-md">
         <BasicButton
           buttonText="Create New Task"
           buttonColor="green-500"

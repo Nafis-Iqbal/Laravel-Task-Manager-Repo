@@ -10,6 +10,7 @@ export const ProjectHeroSection = ({projectTasks} : {projectTasks: Task[]}) => {
             { name: "Completed", value: projectTasks.filter((t) => t.status === statusEnum.completed).length },
             { name: "In Progress", value: projectTasks.filter((t) => t.status === statusEnum.active).length },
             { name: "Paused", value: projectTasks.filter((t) => t.status === statusEnum.paused).length },
+            { name: "Cancelled", value: projectTasks.filter((t) => t.status === statusEnum.cancelled).length },
         ];
     }
     else{

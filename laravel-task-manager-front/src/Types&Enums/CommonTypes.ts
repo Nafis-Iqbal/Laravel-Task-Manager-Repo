@@ -15,8 +15,8 @@ declare global{
         user_id: number;
         status: statusEnum;
         progress: number;
-        start_Date?: Date;
-        end_Date: Date;
+        start_date?: Date;
+        end_date: Date;
     }
 
     interface Task{
@@ -27,8 +27,8 @@ declare global{
         project_id: number;
         priority: priority;
         status: statusEnum;
-        start_Date?: Date;
-        end_Date: Date;
+        start_date?: Date;
+        end_date: Date;
     }
 
     interface Tag{

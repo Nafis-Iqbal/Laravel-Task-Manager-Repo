@@ -12,14 +12,9 @@ const ProjectTaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
       onClick={onClick}
     >
       <td className="p-3">{task.title}</td>
-      <td className="p-3">
-        <div className="relative w-24 h-3 bg-gray-300 rounded-full">
-          <div
-            className="absolute top-0 left-0 h-full bg-blue-500 rounded-full"
-          />
-        </div>
-      </td>
-      <td className="p-3">{task.end_Date ? task.end_Date.toDateString() : "No end date"}</td>
+      <td className="p-3">{task.status}</td>
+      <td className="p-3">{task.priority}</td>
+      <td className="p-3">{task.end_date ? task.end_date.toDateString() : "No end date"}</td>
     </tr>
   );
 };

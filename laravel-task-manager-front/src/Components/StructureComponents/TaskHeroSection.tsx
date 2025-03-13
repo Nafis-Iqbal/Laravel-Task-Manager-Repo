@@ -25,8 +25,6 @@ const TaskDetailHeroSection: React.FC<{
     userName: string,
     customStyle?: string
 }) => {
-  const taskStats = { completed: 10, ongoing: 5 }; // Example data
-  const projectStats = { completed: 7, ongoing: 3 }; // Example data
 
   return (
     <div className={`bg-gray-500 p-8 rounded-lg shadow-md ${customStyle}`}>

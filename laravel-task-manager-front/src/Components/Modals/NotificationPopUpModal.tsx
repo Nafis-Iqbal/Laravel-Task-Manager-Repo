@@ -12,7 +12,7 @@ const NotificationPopUp: React.FC<ModalProps> = ({ isOpen, onClose, message }) =
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed z-20 inset-0 flex items-center justify-center bg-black bg-opacity-50"
       onClick={onClose} // Close modal when clicking outside
     >
       {/* Modal Animation */}

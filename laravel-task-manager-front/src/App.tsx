@@ -14,14 +14,17 @@ import { queryClient } from './Services/API/ApiInstance';
 
 function App() {
   //const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Ensure it returns a boolean
+  //const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true'; // Ensure it returns a boolean
   const isAuthenticated = useAuthSelector((state) => state.auth.isAuthenticated);
+
+  //console.log("turu" + isAuthenticated);
 
   return (
     <QueryClientProvider client={queryClient}>
       <Suspense>
-        <Navbar />
+        <Navbar/>
         {useRoutes(appRoutes)}
-        {isAuthenticated && <Footer/>}
+        {<Footer/>}
       </Suspense>
       <ReactQueryDevtools initialIsOpen={true} />
     </QueryClientProvider>

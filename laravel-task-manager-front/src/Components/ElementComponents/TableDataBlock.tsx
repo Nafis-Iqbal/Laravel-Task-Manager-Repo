@@ -18,17 +18,17 @@ interface TableBlockProps<T>{
     onClickNavigate?: (id: number) => void;
 }
 
-export const TableDataBlock = <T extends {id: number}>({dataList, dataFetchMessage, noContentColSpan, onDataUpdate, onDataDelete, onClickNavigate, isDataLoading} : TableBlockProps<T>) => {
+export const TableDataBlock = <T extends {id: number}>({dataList, dataFetchMessage, noContentColSpan, onDataUpdate, onDataDelete, onClickNavigate, isDataLoading} : TableBlockProps<T>) => {    
     if(isDataLoading){
         return (
             <tr>
-                <td colSpan={4}>
+                <td colSpan={noContentColSpan? noContentColSpan: 4}>
                   <LoadingSpinner/>
                 </td>
             </tr>
         );
     }
-    console.log(dataList);
+    //console.log(dataList);
     if(dataList && dataList.length > 0)
     {
         //Project List
@@ -84,7 +84,7 @@ export const TableDataBlock = <T extends {id: number}>({dataList, dataFetchMessa
             return (
                 <>
                     {(dataList as Tag[]).map((data) => (
-                        <TagListRow key={data.id} tag={data} onUpdate={() => onDataUpdate(data)} onDelete={() => onDataDelete(data.id)}/>
+                        <TagListRow key={data.id} tag={data} onUpdate={(tag: Tag) => onDataUpdate(tag)} onDelete={() => onDataDelete(data.id)}/>
                     ))}
                 </>
             );

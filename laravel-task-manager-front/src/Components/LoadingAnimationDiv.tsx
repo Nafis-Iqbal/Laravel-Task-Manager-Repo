@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const LoadingSpinnerDiv: React.FC<{customStyle?: string}> = ({customStyle = ""}) => {
   return (
-    <div className={`flex flex-col items-center justify-center min-h-[80px] space-y-2 mt-2 mb-2 ${customStyle}`}>
+    <div className={`flex flex-col items-center justify-center min-h-[30px] space-y-2 mt-2 mb-2 ${customStyle}`}>
       {/* Rotating Circular Orb */}
       <motion.div
         className="w-12 h-12 border-4 border-t-transparent border-blue-500 rounded-full"

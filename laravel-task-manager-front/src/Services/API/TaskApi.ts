@@ -95,6 +95,33 @@ export const useCreateTaskRQ = (onSuccessFn: (ApiResponse: any) => void, onError
     });
 }
 
+export const updateTask = async (task: Task) : Promise<AxiosResponse> => {
+    try{
+        const response = await api.patch<ApiResponse<Task>>("tasks/update",{
+            ...task
+        }, {timeout: 15 * 1000});
+
+        return response;
+    }
+    catch(error)
+    {
+        console.log("Error updating task.");
+        throw error;
+    }
+}
+
+export const useUpdateTaskRQ = (onSuccessFn: (ApiResponse: any) => void, onErrorFn: () => void) => {
+    return useMutation({
+        mutationFn: updateTask,
+        onSuccess: (data) => {
+            onSuccessFn(data);
+        },
+        onError: () => {
+            onErrorFn();
+        }   
+    });
+}
+
 export const deleteTask = async (task_id: number): Promise<AxiosResponse> => {
     try{
         const response = await api.delete<ApiResponse<string>>(`tasks/delete/${task_id}`);

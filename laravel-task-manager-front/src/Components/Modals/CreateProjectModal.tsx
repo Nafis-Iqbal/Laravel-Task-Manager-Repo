@@ -18,7 +18,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     progress: 0,
     user_id: 1,
     status: statusEnum.active,
-    end_Date: new Date(),
+    end_date: new Date(),
   });
 
   const {mutate: createProjectMutate} = useCreateProjectRQ(
@@ -35,7 +35,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
           progress: 0,
           user_id: 1,
           status: statusEnum.active,
-          end_Date: new Date(),
+          end_date: new Date(),
         });
       }
       else{
@@ -53,7 +53,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === 'end_Date' ? new Date(value) : value,
+      [name]: name === 'end_Date' ? new Date(value).toISOString().slice(0, 19).replace("T", " ") : value,
     }));
   };
 
@@ -73,7 +73,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
         progress: 0,
         user_id: 1,
         status: statusEnum.active,
-        end_Date: new Date(),
+        end_date: new Date(),
     });
 
     onClose();
@@ -127,7 +127,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
                 type="date"
                 id="end_Date"
                 name="end_Date"
-                value={formData.end_Date.toISOString().split('T')[0]} // Convert Date to yyyy-mm-dd
+                value={formData.end_date.toISOString().split('T')[0]} // Convert Date to yyyy-mm-dd
                 onChange={handleChange}
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               />

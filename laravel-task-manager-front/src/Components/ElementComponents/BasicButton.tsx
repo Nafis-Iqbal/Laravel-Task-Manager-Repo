@@ -11,7 +11,7 @@ const BasicButton = <T extends unknown>({
 
     return(
         <button 
-            className={`px-4 py-2 rounded-lg bg-${buttonColor} text-${textColor} ${customStyle}`}
+            className={`px-2 py-2 rounded-lg bg-${buttonColor} text-${textColor} ${customStyle}`}
             onClick={
                 () => {
                     if(value) onClick(value);

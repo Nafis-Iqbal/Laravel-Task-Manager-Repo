@@ -15,10 +15,10 @@ export const getProjects = async (): Promise<AxiosResponse> => {
     }
 }
 
-export const useGetProjectsRQ = (onSuccessFn: () => void, onErrorFn: () => void) => {
+export const useGetProjectsRQ = (project_id: number | undefined, onSuccessFn: () => void, onErrorFn: () => void) => {
     return useQuery({
         queryFn: getProjects,
-        queryKey: ["projects"],
+        queryKey: project_id? ["projects", project_id] : ["projects"],
         staleTime: 30 * 1000,
         cacheTime: 30 * 1000,
         onSuccess: () => {
