@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://taskmanagerdemo.vercel.app', 'http://localhost:3000'],
+    'allowed_origins' => ['https://taskmanagerdemo.vercel.app', 'http://localhost:3000', 'https://taskmanagerdemo-9px48wduz-nafis-projects-bda2e816.vercel.app/'],
 
     'allowed_origins_patterns' => [],
 
