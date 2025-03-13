@@ -84,7 +84,6 @@ export const useDeleteTagRQ = (onSuccessFn: (ApiResponse: any) => void, onErrorF
 }
 
 export const updateTag = async (tag: Tag) : Promise<AxiosResponse> => {
-    console.log(tag);
     try{
         const response = await api.put<ApiResponse<string>>("tags/update", {
             ...tag

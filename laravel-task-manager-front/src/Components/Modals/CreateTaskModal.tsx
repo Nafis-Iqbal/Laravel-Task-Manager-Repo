@@ -60,7 +60,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const{name, value} = e.target;
-    console.log(value)
+    
     setFormData((prevData) => ({
       ...prevData,
       [name]: name === 'end_Date' ? new Date(value) : value,
@@ -71,7 +71,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     e.preventDefault();
     
     onSubmit();
-    console.log(formData);
     createTaskMutate(formData);
     onClose();
   }

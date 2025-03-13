@@ -58,7 +58,7 @@ const CreateTagModal: React.FC<CreateTagModalProps> = ({
         e.preventDefault();
 
         onSubmit();
-        console.log(formData);
+        //console.log(formData);
         createTaskTagMutate(formData);
         onClose();
     }

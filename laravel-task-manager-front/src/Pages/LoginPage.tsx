@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Updated to useNavigate for React Router v6
 import { AxiosResponse } from 'axios';
 
@@ -9,7 +9,7 @@ import { useAuthDispatch } from '../Hooks/StateHooks';
 
 
 const LoginPage: React.FC = () => {
-  const [isRegistering, setIsRegistering] = useState(true); // Toggle between login and registration forms
+  const [isRegistering, setIsRegistering] = useState(false); // Toggle between login and registration forms
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -41,6 +41,12 @@ const LoginPage: React.FC = () => {
 
     navigate('/dashboard');
   };
+
+  useEffect(() => {
+    // Let React capture browser autofill
+    setEmail((document.getElementById("email") as HTMLInputElement)?.value || "guest@example.com");
+    setPassword((document.getElementById("password") as HTMLInputElement)?.value || "guest1234");
+  }, []);
 
   return (
     <div className="min-h-screen">

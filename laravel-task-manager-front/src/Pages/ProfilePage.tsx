@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { queryClient } from '../Services/API/ApiInstance';
 import { useGetTagsRQ, useDeleteTagRQ, useUpdateTagRQ } from '../Services/API/TagApi';
@@ -15,8 +15,10 @@ import ProfilePicture from '../Components/StructureComponents/ProfilePicture';
 import { TableDataBlock } from '../Components/ElementComponents/TableDataBlock';
 import ProfileHeroSection from '../Components/StructureComponents/ProfileHeroSection';
 import BasicButton from '../Components/ElementComponents/BasicButton';
+import ScrollToTopButton from '../Components/StructureComponents/ScrollToTopButton';
 
 const ProfilePage: React.FC = () => {
+  const location = useLocation();
   const [tagsData, setTagsData] = useState<Tag[]>([]);
   const [tagsFetchMessage, setTagsFetchMessage] = useState<string>("");
   const [isCreateTagOpen, setIsCreateTagOpen] = useState(false);
@@ -91,7 +93,14 @@ const ProfilePage: React.FC = () => {
     setTagsData(tagsDataAll?.data.data);
     setTasksData(tasksDataAll?.data.data);
     setProjectsData(projectsDataAll?.data.data);
-  }, [tagsDataAll, tasksDataAll, projectsDataAll]);
+
+    if (location.state?.scrollTo) {
+      const targetElement = document.getElementById(location.state.scrollTo);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [tagsDataAll, tasksDataAll, projectsDataAll, location.state]);
 
   const openCreateTagForm = () => {
     setIsCreateTagOpen(true);
@@ -156,6 +165,8 @@ const ProfilePage: React.FC = () => {
         isOpen = {loadingContentOpen}
       />
 
+      <ScrollToTopButton/>
+
       <div className="flex space-x-2 pt-2">
         <Link to="/projects">
           <BasicTextDiv
@@ -177,7 +188,7 @@ const ProfilePage: React.FC = () => {
       <div className='min-h-[50px] pt-3 text-2xl font-bold text-red-800'>Admin Tasks</div>
 
       {/* Tag Creation Panel */}
-      <div className="relative flex flex-col justify-left items-center bg-gray-100 rounded-lg pt-4 pb-10">
+      <div id="tag_section" className="relative flex flex-col justify-left items-center bg-gray-100 rounded-lg pt-4 pb-10">
         <h1 className="text-gray-800 pl-3 pb-2 font-bold text-xl">Tag Manager</h1>
         <table className="w-full border-collapse space-y-1">
           <thead>

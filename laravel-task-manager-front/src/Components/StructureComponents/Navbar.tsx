@@ -4,9 +4,6 @@ import { useLogout } from '../../Hooks/UtilHooks';
 
 const Navbar: React.FC = () => {
   const logoutG = useLogout();
-  const fun = () => {
-    console.log("fg");
-  }
 
   return (
     <nav className="bg-gray-800 text-white p-4">
@@ -30,7 +27,6 @@ const Navbar: React.FC = () => {
             Profile
           </Link>
           <button onClick={() => {
-            console.log("bichi");
             logoutG();
           }} className="hover:text-gray-300">
             Logout

@@ -41,7 +41,7 @@ const ProjectDetailsPage: React.FC = () => {
   const {data: projectTasks, isLoading: isTasksByProjectLoading, isError: isTasksLoadingError} = useGetTasksByProjectRQ(
     projectIdNumber, 
     () => {
-      console.log(projectTasks?.data.data);
+      //console.log(projectTasks?.data.data);
       // setTasks(projectTasks?.data.data);
       
       // if(projectTasks?.data.data.length < 1){
@@ -55,7 +55,7 @@ const ProjectDetailsPage: React.FC = () => {
 
   useEffect(() => {
     setTasks(projectTasks?.data.data);
-    console.log(projectTasks?.data.data);
+    //console.log(projectTasks?.data.data);
     if(isTasksLoadingError){
       setTasksFetchMessage("Failed to load Project Tasks.");
     }

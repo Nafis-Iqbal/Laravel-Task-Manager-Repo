@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import {statusEnum} from "../Types&Enums/Enums";
 import { generateFakeProjects } from "../Utilities/FakeData";
 import { useGetProjectsRQ, useDeleteProjectRQ } from "../Services/API/ProjectApi";
 
-import ProjectListRow from "../Components/ElementComponents/ProjectListRow";
-import LoadingSpinner from "../Components/LoadingAnimationDiv";
 import BasicButton from "../Components/ElementComponents/BasicButton";
 import CreateProjectModal from "../Components/Modals/CreateProjectModal";
 import NotificationPopUp from "../Components/Modals/NotificationPopUpModal";
 import LoadingModal from "../Components/Modals/LoadingContentModal";
 import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
+import ScrollToTopButton from "../Components/StructureComponents/ScrollToTopButton";
 
 const isDebugMode:boolean = false;
 
@@ -21,9 +21,11 @@ if(isDebugMode){
 }
 
 const ProjectsListPage = () => {
+  const location = useLocation();
+
   const [projects, setProjects] = useState<Project[]>(isDebugMode? initialProjects : []);
   const [projectsFetchMessage, setProjectsFetchMessage] = useState<string>("");
-  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
+  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(location.state?.isCreateProjectOpen);
   const [loadingContentOpen, setLoadingContentOpen] = useState(false);
   const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
@@ -125,6 +127,8 @@ const ProjectsListPage = () => {
       <LoadingModal
         isOpen = {loadingContentOpen}
       />
+
+      <ScrollToTopButton/>
 
       <div className="bg-white p-4 rounded-lg shadow-md overflow-x-auto">
         <table className="w-full border-collapse">

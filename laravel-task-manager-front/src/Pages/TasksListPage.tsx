@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 import { generateFakeTasks } from "../Utilities/FakeData";
-import {createTask, useGetTasksRQ, useDeleteTaskRQ} from "../Services/API/TaskApi";
+import {useGetTasksRQ, useDeleteTaskRQ} from "../Services/API/TaskApi";
 import { useGetProjectsRQ } from "../Services/API/ProjectApi";
 import { queryClient } from "../Services/API/ApiInstance";
 
-import TaskListRow from "../Components/ElementComponents/TaskListRow";
-import LoadingSpinner from "../Components/LoadingAnimationDiv";
 import BasicButton from "../Components/ElementComponents/BasicButton";
+import ScrollToTopButton from "../Components/StructureComponents/ScrollToTopButton";
 import CreateTaskModal from "../Components/Modals/CreateTaskModal";
 import NotificationPopUp from "../Components/Modals/NotificationPopUpModal";
 import LoadingModal from "../Components/Modals/LoadingContentModal";
@@ -24,9 +24,11 @@ if(isDebugMode){
 }
 
 const TasksListPage = () => {
+  const location = useLocation();
+
   const [tasks, setTasks] = useState<Task[]>(initialTasks ?? []);
   const [tasksFetchMessage, setTasksFetchMessage] = useState<string>("");
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(location.state?.isCreateTaskOpen);
   const [loadingContentOpen, setLoadingContentOpen] = useState(false);
   const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState<string>("");
@@ -157,6 +159,8 @@ const TasksListPage = () => {
       <LoadingModal
         isOpen = {loadingContentOpen}
       />
+
+      <ScrollToTopButton/>
       
       <div className="bg-white p-4 rounded-lg shadow-md overflow-x-auto">
         <table className="table-fixed w-full border-collapse">

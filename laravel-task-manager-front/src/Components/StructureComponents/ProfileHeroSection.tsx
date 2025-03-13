@@ -18,8 +18,6 @@ const ProfileHeroSection = ({projects = [], tasks = []} : {projects: Project[], 
             { name: "Paused", value: projects.filter((t) => t.status === statusEnum.paused).length },
         ];
 
-        console.log(projectChartData);
-
   return (
     <div className="bg-white p-8 rounded-lg shadow-md">
       <h2 className="text-3xl font-semibold mb-4">Tasks and Projects Progress</h2>
