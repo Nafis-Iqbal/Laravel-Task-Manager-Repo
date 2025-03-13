@@ -17,7 +17,10 @@ class Project extends Model
 
     protected $hidden = [];
 
-    protected $casts = [];
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
 
     public function user()
     {

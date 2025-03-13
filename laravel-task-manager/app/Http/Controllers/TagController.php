@@ -39,7 +39,7 @@ class TagController extends Controller
     public function updateTag(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|min:3|max:10|unique:tags,title',
+            'title' => 'required|min:3|max:10|unique:tags,title,'. $request->id,
             'id' => 'required|numeric',
         ]);
 

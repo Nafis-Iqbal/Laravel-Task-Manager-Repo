@@ -43,7 +43,8 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::get('tasks/project/{projectId}', [TaskController::class, 'getTasksByProject'])->name('task.project_show');
     Route::get('tasks/{id}/tags', [TaskController::class, 'getTaskTags'])->name('task.tags');
     Route::post('tasks/create/{projectId}', [TaskController::class, 'createTask'])->name('task.create');
-    Route::put('tasks/update/{id}', [TaskController::class, 'updateTask'])->name('task.update');
+    Route::put('tasks/update', [TaskController::class, 'updateTask'])->name('task.update');
+    Route::patch('tasks/update', [TaskController::class, 'updateTask'])->name('task.update');
     Route::patch('tasks/update/tags', [TaskController::class, 'addTaskTag'])->name('task.update_tag');
     Route::patch('tasks/delete/tags', [TaskController::class, 'deleteTaskTag'])->name('task.update_tag');
     Route::delete('tasks/delete/{id}', [TaskController::class, 'deleteTask'])->name('task.delete');

@@ -26,6 +26,7 @@ class ProjectController extends Controller
         $project->user_id = $user->id;
         $project->status = 'active';
         $project->progress = 0;
+        $project->end_date = $request->end_Date;
 
         $project->save();
 
@@ -77,7 +78,7 @@ class ProjectController extends Controller
     public function updateProject(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|min:4|max:20|unique:projects,title',
+            'title' => 'required|string|min:4|max:20|unique:projects,title' . $id,
             'description' => 'required|string|max:100',
             'status' => 'required|in:active,completed,paused,cancelled',
             'progress' => 'integer|min:0|max:100'

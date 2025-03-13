@@ -121,16 +121,18 @@ class TaskController extends Controller
     }
 
     // Update an existing task
-    public function updateTask(Request $request, $id)
+    public function updateTask(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|max:255',
+            'title' => 'required|max:255|unique:tasks,title,' . $request->id,
             'description' => 'required',
             'status' => 'required|in:active,completed,paused,cancelled',
+            'priority' => 'required|in:normal,urgent',
+            'id' => 'required|numeric'
         ]);
 
         try {
-            $task = Task::findOrFail($id);
+            $task = Task::findOrFail($validatedData['id']);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Task not found!',
@@ -145,11 +147,13 @@ class TaskController extends Controller
             ]);
 
             $task->status = $validatedData['status'];
+            $task->priority = $validatedData['priority'];
             $task->save();
 
             return response()->json([
                 'message' => 'Task updated successfully',
                 'status' => 'success',
+                'data' => $task
             ], 200);
         } else {
             return response()->json([

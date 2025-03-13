@@ -20,7 +20,10 @@ class Task extends Model
 
     protected $hidden = [];
 
-    protected $casts = [];
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
 
     // Define the relationship between Task and User
     public function user()
