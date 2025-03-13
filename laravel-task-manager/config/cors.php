@@ -12,14 +12,14 @@ return [
     | in web browsers. You are free to adjust these settings as needed.
     |
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    |
+    |'allowed_origins' => [env('CORS_ALLOW_URL_LOCAL'), env('CORS_ALLOW_URL_DEPLOY_1')],
     */
 
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('CORS_ALLOW_URL_LOCAL'), env('CORS_ALLOW_URL_DEPLOY_1')],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
