@@ -34,9 +34,10 @@ class AuthController extends Controller
             ], 200);
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
+        return response()->json([
+            'message' => 'Log in failed!',
+            'status' => 'failed'
+        ], 200);
     }
 
     // Show the registration form
@@ -62,13 +63,20 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('tasks.index');
+        return response()->json([
+            'message' => 'Registration successfull!',
+            'status' => 'success',
+        ], 200);
     }
 
     // Handle logout logic
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('login');
+
+        return response()->json([
+            'message' => 'Logged out successfully!',
+            'status' => 'success',
+        ], 200);
     }
 }
