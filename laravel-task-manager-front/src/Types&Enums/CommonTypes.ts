@@ -25,6 +25,7 @@ declare global{
         description: string;
         user_id: number;
         project_id: number;
+        project_title?: string;
         priority: priority;
         status: statusEnum;
         start_date?: Date;

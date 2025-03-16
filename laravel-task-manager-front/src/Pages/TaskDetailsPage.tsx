@@ -5,6 +5,7 @@ import { Plus, X, Image } from "lucide-react";
 import { generateFakeComments, generateFakeTags } from "../Utilities/FakeData";
 import debounce from "lodash/debounce";
 import { queryClient } from "../Services/API/ApiInstance";
+import { useGetAuthenticatedUserRQ } from "../Services/API/UserApi";
 import { useGetTasksRQ, useGetTaskTagsRQ, useUpdateTaskRQ, useAddTaskTags, useDeleteTaskTags } from "../Services/API/TaskApi";
 import { useAddCommentsRQ, useDeleteCommentsRQ, useGetCommentsRQ } from "../Services/API/CommentApi";
 import { useGetTagsRQ } from "../Services/API/TagApi";
@@ -57,6 +58,8 @@ const TaskDetailsPage = () => {
 
   //[[HOOKS]]
   //GET => FETCH QUERIES
+  const {data: userData} = useGetAuthenticatedUserRQ();
+
   const {data: taskDetail} = useGetTasksRQ(
     taskIdNumber, 
     () => {
@@ -251,9 +254,9 @@ const TaskDetailsPage = () => {
       <TaskDetailHeroSection
         task_title={taskDetailData ? taskDetailData.title : "Noob"}
         task_id={taskIdNumber}
-        project_title="GG"
+        project_title={taskDetailData?.project_title ? taskDetailData.project_title : "none"}
         project_id={taskDetailData ? taskDetailData.project_id : 0}
-        userName="Nafis"
+        userName={userData?.data.data.name}
         user_id={taskDetailData ? taskDetailData.user_id : 0}
         customStyle="mb-4 bg-blue-200"
       />
@@ -434,14 +437,19 @@ const TaskDetailsPage = () => {
         {/* Show Photos Button */}
         <button
           onClick={() => setIsShowPhotoOpen(true)}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700
+          disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+          disabled
         >
           <Image className="w-5 h-5" />
           Show Photos
         </button>
 
         {/* Add Photo Button */}
-        <button className="flex items-center gap-2 bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">
+        <button className="flex items-center gap-2 bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700
+        disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+        disabled
+        >
           <Plus className="w-5 h-5" />
           Add Photo
         </button>

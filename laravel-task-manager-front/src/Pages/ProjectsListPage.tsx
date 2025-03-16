@@ -89,7 +89,9 @@ const ProjectsListPage = () => {
   }
 
   const onCreateProjectFailure = () => {
-
+    setLoadingContentOpen(false);
+    setNotificationPopupOpen(true);
+    setNotificationMessage("Error creating project!");
   }
 
   const onProjectDelete = (project_id: number) => {
@@ -152,13 +154,14 @@ const ProjectsListPage = () => {
       </div>
 
       <div className="flex justify-end p4 bg-gray-200 rounded-b-md">
-      <BasicButton
+      {projects && projects.length > 7 && (<BasicButton
           buttonText="Create New Project"
           buttonColor="green-500"
           textColor="white"
           onClick={openCreateProjectForm}
           customStyle="pb-3 m-1"
         />
+      )}
       </div>
     </div>
   );

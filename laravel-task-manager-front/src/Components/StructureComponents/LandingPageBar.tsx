@@ -9,7 +9,6 @@ const LandingPageBar: React.FC = () => {
         <h1 className='text-4xl text-center font-bold'>Task Manager</h1>
         
         <div className='flex flex-col px-2'>
-            {/* <p className='text-2xl text-white'>Developed by Nafis Iqbal</p> */}
             <p className="text-xl text-white">
                 Developed by {" "}
                 <span className="text-red-400 text-2xl font-bold drop-shadow-m">Nafis Iqbal</span>

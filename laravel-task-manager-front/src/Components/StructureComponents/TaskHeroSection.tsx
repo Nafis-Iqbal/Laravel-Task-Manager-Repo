@@ -26,25 +26,26 @@ const TaskDetailHeroSection: React.FC<{
     customStyle?: string
 }) => {
 
+    const isGroupProjectTask: boolean = false;
   return (
     <div className={`bg-gray-500 p-8 rounded-lg shadow-md ${customStyle}`}>
         <div className="flex flex-col">
             <h1 className="text-4xl font-semibold mb-3 bg-blue-400 rounded-lg p-2">{task_title}</h1>
 
-            <h3 className="text-2xl font-semibold">{task_id}</h3>
+            <h3 className="text-2xl font-semibold"># {task_id}</h3>
             
-            <div className="min-h-[150px]"></div>
+            <div className="min-h-[100px]"></div>
             
             <div className="flex justify-between">
                 <div className="flex flex-col">
+                <p className="pt-2 ml-2 text-xl font-semibold">Belongs to project:</p>
                     <h2 className="text-2xl bg-blue-400 rounded-lg p-2">{project_title}</h2>
-                    <p className="text-center pt-2 text-xl font-semibold">{project_id}</p>
                 </div>
 
-                <div className="flex flex-col">
+                {isGroupProjectTask && (<div className="flex flex-col">
                     <h2 className="text-2xl bg-blue-400 rounded-lg p-2">{userName}</h2>
                     <p className="text-center pt-2 text-xl font-semibold">{user_id}</p>
-                </div>
+                </div>)}
             </div>
         </div>
     </div>

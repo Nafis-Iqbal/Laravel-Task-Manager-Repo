@@ -185,13 +185,14 @@ const TasksListPage = () => {
       </div>
 
       <div className="flex justify-end p4 bg-gray-200 rounded-b-md">
-        <BasicButton
+        {tasks && tasks.length > 5 && (<BasicButton
           buttonText="Create New Task"
           buttonColor="green-500"
           textColor="white"
           onClick={openCreateTaskForm}
           customStyle="pt-2 mt-1 mr-2 mb-1"
         />
+        )}
       </div>
     </div>
   );

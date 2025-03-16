@@ -55,6 +55,8 @@ class TaskController extends Controller
         if ($id) {
             try {
                 $task = Task::findOrFail($id);
+                $task->project_title = $task->project->title;
+                unset($task->project);
             } catch (ModelNotFoundException $e) {
                 return response()->json([
                     'message' => 'Task not found',

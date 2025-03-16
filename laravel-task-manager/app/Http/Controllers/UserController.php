@@ -74,6 +74,17 @@ class UserController extends Controller
         }
     }
 
+    public function getAuthenticatedUser()
+    {
+        $user = Auth::user();
+
+        return response()->json([
+            'message' => 'Authenticated user found.',
+            'status' => 'success',
+            'data' => $user
+        ], 200);
+    }
+
     public function updateUser(Request $request)
     {
         $validatedData = $request->validate([

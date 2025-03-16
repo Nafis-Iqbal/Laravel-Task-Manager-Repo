@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Updated to useNavigate for React Router v6
 import { AxiosResponse } from 'axios';
+import { queryClient } from '../Services/API/ApiInstance';
 
 import {createUser, loginUser} from '../Services/API/UserApi';
-import { setAuth} from '../ContextAPIs/AuthSlice';
+import { setAuth} from '../GlobalStateContext/AuthSlice';
 import { useAuthDispatch } from '../Hooks/StateHooks';
 
 const LoginPage: React.FC = () => {
@@ -57,7 +58,7 @@ const LoginPage: React.FC = () => {
       sessionStorage.setItem('auth_token', response.data?.auth_token);
       sessionStorage.setItem('isAuthenticated', "true");
       dispatch(setAuth({ token: response.data.auth_token, user_id: response.data.user_id }));
-      
+
       navigate('/dashboard');
       setLoginErrorMessage("");
     }

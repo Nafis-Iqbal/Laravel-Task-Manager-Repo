@@ -27,6 +27,7 @@ Route::post('users/create', [UserController::class, 'createUser'])->name('user.c
 Route::post('login', [AuthController::class, 'login'])->name('login');
 
 Route::middleware(['auth:sanctum', 'api'])->group(function () {
+    Route::get('user', [UserController::class, 'getAuthenticatedUser'])->name('user.current');
     Route::get('users', [UserController::class, 'getUsers'])->name('user.index');
     Route::get('users/{id}', [UserController::class, 'getUsers'])->name('user.show');
     Route::put('users/update', [UserController::class, 'updateUser'])->name('user.update');

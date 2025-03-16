@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import { queryClient } from '../Services/API/ApiInstance';
+import { useGetAuthenticatedUserRQ } from '../Services/API/UserApi';
 import { useGetTasksRQ } from '../Services/API/TaskApi';
 import { statusEnum } from '../Types&Enums/Enums';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +18,8 @@ const DashboardPage: React.FC = () => {
     completed: 0,
     cancelled: 0
   });
+
+  const {data: userData} = useGetAuthenticatedUserRQ();
 
   const navigate = useNavigate();
 
@@ -74,8 +78,9 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
-      <header className="bg-gray-300 min-h-[100px] text-blue-900 p-4">
-        <h1 className="text-3xl font-bold ml-5 mt-3">Dashboard</h1>
+      <header className="flex items-center justify-between bg-gray-300 min-h-[100px] text-blue-900 p-4">
+        <h1 className="flex-shrink-0 text-3xl font-bold ml-5 mt-3">Dashboard</h1>
+        <h1 className="text-3xl font-bold mt-3 mx-auto">Welcome {userData?.data.data.name}!</h1>
       </header>
 
       <div className="flex flex-1 p-4 space-x-4">

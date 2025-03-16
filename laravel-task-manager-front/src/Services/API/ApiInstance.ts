@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '../../ContextAPIs/GlobalStateStore';
+import store from '../../GlobalStateContext/GlobalStateStore';
 import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient();

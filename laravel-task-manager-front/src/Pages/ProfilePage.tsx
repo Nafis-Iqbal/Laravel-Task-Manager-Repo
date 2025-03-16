@@ -30,7 +30,7 @@ const ProfilePage: React.FC = () => {
   const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState<string>("");
 
-  const [profilePicture, setProfilePicture] = useState<string>('default_picture_url');
+  const [profilePicture, setProfilePicture] = useState<string>('images/profile_picture.jpg');
 
   const { data: tasksDataAll , isLoading: isTasksLoading} = useGetTasksRQ(
     undefined, 
@@ -140,12 +140,8 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-8 min-h-screen space-y-4 bg-gray-200">
       <ProfileHeroSection tasks={tasksData} projects={projectsData}/>
-      
-      <div className="relative flex justify-left items-center bg-white rounded-lg pt-4 pb-4">
-        <ProfilePicture src={profilePicture}/>
-      </div>
 
-      <UserInfo />
+      <UserInfo profilePicture={profilePicture}/>
 
       <CreateTagModal
         isOpen={isCreateTagOpen}
@@ -171,19 +167,16 @@ const ProfilePage: React.FC = () => {
         <Link to="/projects">
           <BasicTextDiv
             displayText='Show Projects'
-            customStyle='rounded-lg bg-green-500 text-white p-3'
+            customStyle='rounded-lg bg-green-500 text-white p-3 shadow-md'
           />
         </Link>
         <Link to="/tasks">
           <BasicTextDiv
             displayText='Show Tasks'
-            customStyle='rounded-lg bg-green-500 text-white p-3'
+            customStyle='rounded-lg bg-green-500 text-white p-3 shadow-md'
           />
         </Link>
       </div >
-
-      <div className='min-h-[50px] pt-3 text-2xl font-bold text-red-800'>Edit User Info</div>
-
 
       <div className='min-h-[50px] pt-3 text-2xl font-bold text-red-800'>Admin Tasks</div>
 
