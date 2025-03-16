@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Updated to useNavigate for React Router v6
 import { AxiosResponse } from 'axios';
 
@@ -6,14 +6,13 @@ import {createUser, loginUser} from '../Services/API/UserApi';
 import { setAuth} from '../ContextAPIs/AuthSlice';
 import { useAuthDispatch } from '../Hooks/StateHooks';
 
-
-
 const LoginPage: React.FC = () => {
-  const [isRegistering, setIsRegistering] = useState(false); // Toggle between login and registration forms
+  const [isRegistering, setIsRegistering] = useState(true); // Toggle between login and registration forms
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [name, setName] = useState('Guest'); // For registration
+  const [loginErrorMessage, setLoginErrorMessage] = useState<string>("");
+  const [name, setName] = useState(''); // For registration
   const navigate = useNavigate(); // Updated to useNavigate
 
   const dispatch = useAuthDispatch();
@@ -26,27 +25,46 @@ const LoginPage: React.FC = () => {
       sessionStorage.setItem('auth_token', response.data?.auth_token);
       sessionStorage.setItem('isAuthenticated', "true");
       dispatch(setAuth({ token: response.data.auth_token, user_id: response.data.user_id }));
+      
+      navigate('/dashboard');
+      setLoginErrorMessage("");
     }
-
-    navigate('/dashboard');
+    else{
+      setLoginErrorMessage("Wrong username or password.");
+    }
   };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const response = await createUser(name, email, password, passwordConfirmation);
 
-    if (response.data?.auth_token) {     
+    if (response.data?.auth_token) {   
+      sessionStorage.setItem('auth_token', response.data?.auth_token);
+      sessionStorage.setItem('isAuthenticated', "true");  
       dispatch(setAuth({ token: response.data.auth_token, user_id: response.data.user_id }));
-    }
 
-    navigate('/dashboard');
+      navigate('/dashboard');
+      setLoginErrorMessage("");
+    }
   };
 
-  useEffect(() => {
-    // Let React capture browser autofill
-    setEmail((document.getElementById("email") as HTMLInputElement)?.value || "guest@example.com");
-    setPassword((document.getElementById("password") as HTMLInputElement)?.value || "guest1234");
-  }, []);
+  const handleGuestLogin = async () => {
+    console.log("Shei mama!");
+
+    const response = await loginUser('guest53@example.com', '12345678');
+
+    if (response.data?.auth_token) {
+      sessionStorage.setItem('auth_token', response.data?.auth_token);
+      sessionStorage.setItem('isAuthenticated', "true");
+      dispatch(setAuth({ token: response.data.auth_token, user_id: response.data.user_id }));
+      
+      navigate('/dashboard');
+      setLoginErrorMessage("");
+    }
+    else{
+      setLoginErrorMessage("Wrong username or password.");
+    }
+  }
 
   return (
     <div className="min-h-screen">
@@ -72,6 +90,7 @@ const LoginPage: React.FC = () => {
               />
             </div>
           )}
+
           <div>
             <label htmlFor="email" className="block text-white">Email</label>
             <input
@@ -83,8 +102,13 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
+          
           <div>
-            <label htmlFor="password" className="block text-white">Password</label>
+            <div className="flex justify-between items-center">
+              <label htmlFor="password" className="block text-white">Password</label>
+              <div className="text-red-500 text-sm text-center">{loginErrorMessage}</div>
+            </div>
+            
             <input
               type="password"
               id="password"
@@ -94,6 +118,7 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
+          
           {isRegistering && (
             <div>
               <label htmlFor="password" className="block text-white">Confirm Password</label>
@@ -107,6 +132,19 @@ const LoginPage: React.FC = () => {
               />
             </div>
           )}
+
+          {isRegistering && (
+            <div>
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              className="w-full py-3 bg-red-600 text-white rounded-md hover:bg-red-500 focus:ring-2 focus:ring-maroon-500"
+            >
+              Instant Login for guests 
+            </button>
+          </div>
+          )}
+
           <div>
             <button
               type="submit"

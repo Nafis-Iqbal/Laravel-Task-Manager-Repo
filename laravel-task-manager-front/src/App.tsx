@@ -10,19 +10,18 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import Navbar from './Components/StructureComponents/Navbar';
 import Footer from './Components/StructureComponents/FooterSection';
+import LandingPageBar from './Components/StructureComponents/LandingPageBar';
 import { queryClient } from './Services/API/ApiInstance';
 
 function App() {
   //const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Ensure it returns a boolean
-  //const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true'; // Ensure it returns a boolean
-  const isAuthenticated = useAuthSelector((state) => state.auth.isAuthenticated);
-
-  //console.log("turu" + isAuthenticated);
+  const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true'; // Ensure it returns a boolean
+  //const isAuthenticated = useAuthSelector((state) => state.auth.isAuthenticated);
 
   return (
     <QueryClientProvider client={queryClient}>
       <Suspense>
-        <Navbar/>
+        {isAuthenticated ? <Navbar/> : <LandingPageBar/>}
         {useRoutes(appRoutes)}
         {<Footer/>}
       </Suspense>

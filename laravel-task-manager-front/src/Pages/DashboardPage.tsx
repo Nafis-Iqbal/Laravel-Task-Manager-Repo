@@ -74,8 +74,8 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
-      <header className="bg-blue-600 min-h-[100px] text-white p-4">
-        <h1 className="text-3xl font-semibold">Dashboard</h1>
+      <header className="bg-gray-300 min-h-[100px] text-blue-900 p-4">
+        <h1 className="text-3xl font-bold ml-5 mt-3">Dashboard</h1>
       </header>
 
       <div className="flex flex-1 p-4 space-x-4">
@@ -129,13 +129,13 @@ const DashboardPage: React.FC = () => {
               <button onClick={() => filterTasksByPriority('urgent')} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
                 Urgent
               </button>
-              <button onClick={() => filterTasksByPriority('normal')} className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
+              <button onClick={() => filterTasksByPriority('normal')} className="bg-green-400 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
                 Normal
               </button>
               <button onClick={() => filterTasksByStatus('paused')} className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
                 Paused
               </button>
-              <button onClick={() => filterTasksByStatus('completed')} className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
+              <button onClick={() => filterTasksByStatus('completed')} className="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
                 Completed
               </button>
               <p className="text-green-700 font-semibold">More features to come...</p>
@@ -147,7 +147,7 @@ const DashboardPage: React.FC = () => {
 
           {/* Task List */}
           <section className="bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-xl font-semibold mb-4">Tasks</h2>
+            <h2 className="text-xl font-semibold mb-4">Filtered Tasks</h2>
               <table className='w-full'>
                 <thead>
                   <tr>
@@ -155,7 +155,7 @@ const DashboardPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTasks? (filteredTasks.map((task) => (
+                  {(filteredTasks && filteredTasks.length > 0)? (filteredTasks.map((task) => (
                     <tr>
                       <td>
                         <li key={task.id} className="flex justify-between items-center border-b pb-4 mb-4">

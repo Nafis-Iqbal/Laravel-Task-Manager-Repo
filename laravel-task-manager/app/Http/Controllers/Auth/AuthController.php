@@ -62,10 +62,14 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        /** @var \App\Models\User $user **/
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Registration successfull!',
             'status' => 'success',
+            'auth_token' => $token,
+            'token_type' => 'Bearer',
         ], 200);
     }
 
