@@ -11,7 +11,6 @@ import BasicTextDiv from '../Components/CustomDivElements';
 import CreateTagModal from '../Components/Modals/CreateTaskTagModal';
 import LoadingModal from '../Components/Modals/LoadingContentModal';
 import NotificationPopUp from '../Components/Modals/NotificationPopUpModal';
-import ProfilePicture from '../Components/StructureComponents/ProfilePicture';
 import { TableDataBlock } from '../Components/ElementComponents/TableDataBlock';
 import ProfileHeroSection from '../Components/StructureComponents/ProfileHeroSection';
 import BasicButton from '../Components/ElementComponents/BasicButton';
@@ -178,7 +177,7 @@ const ProfilePage: React.FC = () => {
         </Link>
       </div >
 
-      <div className='min-h-[50px] pt-3 text-2xl font-bold text-red-800'>Admin Tasks</div>
+      <div className='min-h-[50px] pt-3 text-2xl font-bold text-blue-900'>Admin Tasks</div>
 
       {/* Tag Creation Panel */}
       <div id="tag_section" className="relative flex flex-col justify-left items-center bg-gray-100 rounded-lg pt-4 pb-10">

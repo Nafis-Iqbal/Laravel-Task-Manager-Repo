@@ -36,7 +36,7 @@ Route::middleware(['auth:sanctum', 'api'])->group(function () {
     Route::get('projects', [ProjectController::class, 'getProjects'])->name('projects.index');
     Route::get('projects/{id}', [ProjectController::class, 'getProjects'])->name('project.show');
     Route::post('projects/create', [ProjectController::class, 'createProject'])->name('project.create');
-    Route::put('projects/update/{id}', [ProjectController::class, 'updateProject'])->name('project.update');
+    Route::put('projects/update', [ProjectController::class, 'updateProject'])->name('project.update');
     Route::delete('projects/delete/{id}', [ProjectController::class, 'deleteProject'])->name('project.delete');
 
     Route::get('tasks', [TaskController::class, 'getTasks'])->name('task.index');

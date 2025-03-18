@@ -6,6 +6,7 @@ import LoginPage from "../Pages/LoginPage";
 import ProfilePage from "../Pages/ProfilePage";
 import TasksListPage from "../Pages/TasksListPage";
 import ProjectsListPage from "../Pages/ProjectsListPage";
+import ResourceNotFoundPage from "../Pages/ResourceNotFound";
 
 const DashboardPage = lazy(() => import("../Pages/DashboardPage"));
 const TaskDetailsPage = lazy(() => import("../Pages/TaskDetailsPage"));
@@ -53,6 +54,10 @@ const appRoutes: RouteObject[] = [
             {
                 path: "/admin",
                 element: <AdminPage/>,
+            },
+            {
+                path: "/resource_not_found",
+                element: <ResourceNotFoundPage/>,
             }
         ]
     }

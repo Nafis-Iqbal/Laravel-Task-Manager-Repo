@@ -44,4 +44,14 @@ declare global{
         onSuccess: (data: Tag) => void;
         onFailure: () => void;
     }
+
+    interface EditUserInfoModalProps
+    {
+        isOpen: boolean;
+        defaultUserInfo: User;
+        onClose: () => void;
+        onSubmit: () => void;
+        onSuccess: (data: User) => void;
+        onFailure: () => void;
+    }
 }

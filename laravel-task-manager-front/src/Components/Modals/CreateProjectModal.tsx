@@ -53,7 +53,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === 'end_Date' ? new Date(value).toISOString().slice(0, 19).replace("T", " ") : value,
+      [name]: name === 'end_date' ? new Date(value).toISOString().slice(0, 19).replace("T", " ") : value,
     }));
   };
 
@@ -120,13 +120,13 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   
             {/* End Date Picker */}
             <div className="mb-4">
-              <label htmlFor="end_Date" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="end_date" className="block text-sm font-medium text-gray-700">
                 End Date
               </label>
               <input
                 type="date"
-                id="end_Date"
-                name="end_Date"
+                id="end_date"
+                name="end_date"
                 value={formData.end_date.toISOString().split('T')[0]} // Convert Date to yyyy-mm-dd
                 onChange={handleChange}
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"

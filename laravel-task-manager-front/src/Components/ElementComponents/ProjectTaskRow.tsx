@@ -6,6 +6,7 @@ type TaskRowProps = {
 };
 
 const ProjectTaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
+  console.log("data " + task.end_date);
   return (
     <tr
       className="border-b border-gray-200 cursor-pointer hover:bg-blue-100 hover:shadow-md transition duration-200"
@@ -14,7 +15,7 @@ const ProjectTaskRow: React.FC<TaskRowProps> = ({ task, onClick }) => {
       <td className="p-3">{task.title}</td>
       <td className="p-3">{task.status}</td>
       <td className="p-3">{task.priority}</td>
-      <td className="p-3">{task.end_date ? task.end_date.toDateString() : "No end date"}</td>
+      <td className="p-3">{task.end_date ? new Date(task.end_date).toDateString() : "No end date"}</td>
     </tr>
   );
 };

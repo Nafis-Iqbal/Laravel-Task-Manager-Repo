@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Project;
 use Exception;
+use Illuminate\Contracts\Support\ValidatedData;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -20,18 +21,32 @@ class TaskController extends Controller
             'description' => 'required|max:100',
             'priority' => 'required|in:normal,urgent',
             'status' => 'required|in:active,completed,paused,cancelled',
+            'end_date' => 'required|date'
         ]);
+
+        $user = Auth::user();
+
+        /** @var \App\Models\User $user **/
+        $taskTitleExists = $user->tasks()->where('tasks.title', $validatedData['title'])->exists();
+
+        if($taskTitleExists)
+        {
+            return response()->json([
+                'message' => 'Task creation failed. User already has a task with the same title.',
+                'status' => 'failed',
+                'data' => [] 
+            ]);
+        }
 
         $task = new Task([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
         ]);
 
-        $user = Auth::user();
-
         $task->status = $validatedData['status'];
         $task->priority = $validatedData['priority'];
         $task->project_id = $projectId;
+        $task->end_date = $validatedData['end_date'];
         $task->user_id = $user->id; // Assign the task to the logged-in user
 
         try {
@@ -45,7 +60,8 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Task creation failed. Check if parent project exists',
                 'error' => $q->getMessage(),
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
     }
@@ -60,7 +76,8 @@ class TaskController extends Controller
             } catch (ModelNotFoundException $e) {
                 return response()->json([
                     'message' => 'Task not found',
-                    'status' => 'failed'
+                    'status' => 'failed',
+                    'data' => [] 
                 ], 200);
             }
 
@@ -68,6 +85,7 @@ class TaskController extends Controller
                 return response()->json([
                     'message' => 'Unauthorised Access!',
                     'status' => 'failed',
+                    'data' => [] 
                 ], 201);
             }
 
@@ -95,7 +113,8 @@ class TaskController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Project not found',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
 
@@ -103,6 +122,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Unauthorised Access!',
                 'status' => 'failed',
+                'data' => [] 
             ], 201);
         }
 
@@ -111,7 +131,8 @@ class TaskController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Tasks not found',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
 
@@ -126,7 +147,7 @@ class TaskController extends Controller
     public function updateTask(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|max:255|unique:tasks,title,' . $request->id,
+            'title' => 'required|max:255',
             'description' => 'required',
             'status' => 'required|in:active,completed,paused,cancelled',
             'priority' => 'required|in:normal,urgent',
@@ -139,7 +160,25 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Task not found!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
+        }
+
+        $user = Auth::user();
+
+        /** @var \App\Models\User $user **/
+        $taskTitleExists = $user->tasks()
+        ->where('tasks.title', $validatedData['title'])
+        ->where('tasks.id', '!=', $validatedData['id'])
+        ->exists();
+
+        if($taskTitleExists)
+        {
+            return response()->json([
+                'message' => 'Task update failed. User already has a task with the target title.',
+                'status' => 'failed',
+                'data' => [] 
+            ]);
         }
 
         if ($task->user_id == Auth::id()) {
@@ -152,6 +191,23 @@ class TaskController extends Controller
             $task->priority = $validatedData['priority'];
             $task->save();
 
+            if($request->has('status') && $request->input('status') == "completed"){
+                $taskParentProject = $task->project;
+                $parentProjectTasks = $taskParentProject->tasks;
+
+                $completedTaskCount = $parentProjectTasks->where("status", "completed")->count();
+
+                $parentProjectProgress = intval(($completedTaskCount/$parentProjectTasks->count()) * 100); 
+                $taskParentProject->progress = $parentProjectProgress;
+
+                if($parentProjectProgress > 99)
+                {
+                    $taskParentProject->status = "completed";
+                }
+
+                $taskParentProject->save();
+            }
+
             return response()->json([
                 'message' => 'Task updated successfully',
                 'status' => 'success',
@@ -161,6 +217,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Unauthorized access!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
     }
@@ -179,6 +236,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Task not found!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
 
@@ -199,6 +257,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Unauthorized access!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
     }
@@ -217,6 +276,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Task not found!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
 
@@ -237,6 +297,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Unauthorized access!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
     }
@@ -249,6 +310,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Task not found!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
 
@@ -264,6 +326,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Unauthorized access!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
     }
@@ -277,6 +340,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Task not found.',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
 
@@ -291,6 +355,7 @@ class TaskController extends Controller
             return response()->json([
                 'message' => 'Unauthorized access!',
                 'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
     }

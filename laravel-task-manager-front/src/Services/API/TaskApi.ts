@@ -24,7 +24,7 @@ const getTasks = async (task_id?: number): Promise<AxiosResponse> => {
     }
 }
 
-export const useGetTasksRQ = (task_id: number | undefined, onSuccessFn: () => void, onErrorFn: () => void,
+export const useGetTasksRQ = (task_id: number | undefined, onSuccessFn: (ApiResponse: any) => void, onErrorFn: () => void,
 cacheTimer: number = 8 * 1000, staleTimer: number = 7 * 1000, refetchInterval: number = 60 * 1000) => {
     return useQuery({
         queryKey: task_id? ["tasks", task_id] : ["tasks"],
@@ -32,8 +32,8 @@ cacheTimer: number = 8 * 1000, staleTimer: number = 7 * 1000, refetchInterval: n
         cacheTime: cacheTimer,
         staleTime: staleTimer,
         refetchInterval: refetchInterval,
-        onSuccess: () => {
-            onSuccessFn();
+        onSuccess: (data) => {
+            onSuccessFn(data);
         },
         onError: () => {
             onErrorFn();
@@ -54,14 +54,14 @@ export const getTasksByProject = async (project_id: number): Promise<AxiosRespon
     }
 }
 
-export const useGetTasksByProjectRQ = (project_id: number, onSuccessFn: () => void, onErrorFn: () => void) => {
+export const useGetTasksByProjectRQ = (project_id: number, onSuccessFn: (ApiResponse: any) => void, onErrorFn: () => void) => {
     return useQuery({
         queryFn: () => getTasksByProject(project_id),
         queryKey: ["task/projects", project_id],
         staleTime: 30 * 1000,
         cacheTime: 30 * 1000,
-        onSuccess: () => {
-            onSuccessFn();
+        onSuccess: (data) => {
+            onSuccessFn(data);
         },
         onError: () => {
             onErrorFn();

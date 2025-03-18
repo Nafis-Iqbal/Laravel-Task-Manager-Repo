@@ -1,33 +1,27 @@
-import { priority, statusEnum } from "../../Types&Enums/Enums";
 import { useState, useEffect } from 'react';
 
-import { useCreateTagRQ } from '../../Services/API/TagApi';
 import { queryClient } from "../../Services/API/ApiInstance";
+import { useUpdateUserRQ } from "../../Services/API/UserApi";
+import { isNumber } from '../../Utilities/Utilities';
 
-const CreateTagModal: React.FC<CreateTagModalProps> = ({
+const EditUserModal: React.FC<EditUserInfoModalProps> = ({
     isOpen,
+    defaultUserInfo,
     onClose,
     onSubmit,
     onSuccess,
     onFailure
 }) => {
 
-    const[formData, setFormData] = useState<Tag>({
-        id:0,
-        title: ''
-    });
+    const[formData, setFormData] = useState<User>(defaultUserInfo);
 
-    const {mutate: createTaskTagMutate} = useCreateTagRQ(
+    const {mutate: updateUserInfoMutate} = useUpdateUserRQ(
         (responseData) => {
-            if(responseData.data.status === "success")
-            {
+            if(responseData.data.status === "success"){
                 onSuccess(formData);
-                queryClient.invalidateQueries(["tags"]);
+                queryClient.invalidateQueries(["user"]);
 
-                setFormData({
-                    id: 0,
-                    title: ''
-                });
+                setFormData(defaultUserInfo);
             }
             else{
                 onFailure();
@@ -36,35 +30,42 @@ const CreateTagModal: React.FC<CreateTagModalProps> = ({
         () => {
             onFailure();
         }
-    ); 
+    );
 
     useEffect(() => {
-
-    }, []);
+        setFormData(defaultUserInfo);
+    }, [defaultUserInfo]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      const{name, value} = e.target;
+        let{name, value} = e.target;
 
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: name === 'end_date' ? new Date(value) : value,
-      }));
+        if(name === "phone_number" && !isNumber(value)){
+            value = formData.phone_number;
+        }
+       
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+        console.log(formData);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!formData.name && !formData.phone_number) {
+            alert("Please fill at least one field!");
+            return;
+        }
+
         onSubmit();
-        //console.log(formData);
-        createTaskTagMutate(formData);
+        
+        updateUserInfoMutate(formData);
         onClose();
     }
 
     const handleClose = () => {
-        setFormData({
-          id: 0,
-          title: ''
-        });
+        setFormData(defaultUserInfo);
 
         onClose();
     }
@@ -74,22 +75,37 @@ const CreateTagModal: React.FC<CreateTagModalProps> = ({
     return(
         <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 backdrop-blur-sm z-50">
         <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-lg">
-          <h2 className="text-2xl font-semibold mb-4">Create Tag</h2>
+          <h2 className="text-2xl font-semibold mb-4">Edit User Info</h2>
   
           <form onSubmit={(e) => handleSubmit(e)}> {/* Delegate form submission to parent */}
-            {/* Task Title */}
+            {/* User Name */}
             <div className="mb-4">
               <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                Tag Title
+                User Name
               </label>
               <input
                 type="text"
-                id="title"
-                name="title"
-                value={formData.title}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+
+            {/* Phone Number*/}
+            <div className="mb-4">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <input
+                type="text"
+                id="number"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                maxLength={11}
               />
             </div>
   
@@ -105,7 +121,7 @@ const CreateTagModal: React.FC<CreateTagModalProps> = ({
                 type="submit"
                 className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
               >
-                Create Tag
+                Submit Info
               </button>
             </div>
           </form>          
@@ -114,4 +130,4 @@ const CreateTagModal: React.FC<CreateTagModalProps> = ({
     );
 }
 
-export default CreateTagModal;
+export default EditUserModal;

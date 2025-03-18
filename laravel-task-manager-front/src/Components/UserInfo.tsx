@@ -1,20 +1,119 @@
-import React from 'react';
+import {useState} from 'react';
+import { queryClient } from '../Services/API/ApiInstance';
+import { useGetAuthenticatedUserRQ } from '../Services/API/UserApi';
 import ProfilePicture from './StructureComponents/ProfilePicture';
+import makeFirstLetterUppercase from '../Utilities/Utilities';
+import EditUserModal from '../Components/Modals/EditUserInfoModal';
+import LoadingModal from '../Components/Modals/LoadingContentModal';
+import NotificationPopUp from '../Components/Modals/NotificationPopUpModal';
 
 const UserInfo = ({profilePicture} : {profilePicture: string}) => {
-  const userInfo = {
-    name: "Nafis Iqbal",
-    role: "Developer",
-    phone: "+1234567890"
-  };
+  const [isEditUserOpen, setIsEditUserOpen] = useState(false);
+    const [loadingContentOpen, setLoadingContentOpen] = useState(false);
+    const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
+    const [notificationMessage, setNotificationMessage] = useState<string>("");
+
+  const {data: userData} = useGetAuthenticatedUserRQ();
+
+  const openEditUserForm = () => {
+    console.log("bichi");
+    setIsEditUserOpen(true);
+  }
+
+  const onEditUserSubmit = () => {
+    setLoadingContentOpen(true);
+  }
+
+  const onEditUserSuccess = (formData: User) => {
+    setLoadingContentOpen(false);
+
+    openNotificationPopUpMessage("User info updated successfully!");
+
+    queryClient.invalidateQueries(["user"]);
+  }
+
+  const onEditUserFailure = () => {
+    setLoadingContentOpen(false);
+    openNotificationPopUpMessage("Error updating User info!");
+  }
+
+  const openNotificationPopUpMessage = (popUpMessage: string) => {
+    setNotificationPopupOpen(true);
+    setNotificationMessage(popUpMessage);
+  }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg space-y-3 shadow-md">
+      <h3 className="mb-4 text-2xl font-bold text-blue-900">User Info</h3>
       <ProfilePicture src={profilePicture} customStyle="mb-2"/>
-      <h3 className="text-xl font-medium mb-4">User Info</h3>
-      <p><strong>Name:</strong> {userInfo.name}</p>
-      <p><strong>Role:</strong> {userInfo.role}</p>
-      <p><strong>Phone:</strong> {userInfo.phone}</p>
+
+      <EditUserModal
+        isOpen={isEditUserOpen}
+        defaultUserInfo={userData? userData?.data.data : {name: '', phone_number: ''}}
+        onClose={() => setIsEditUserOpen(false)}
+        onSubmit={onEditUserSubmit}
+        onSuccess={onEditUserSuccess}
+        onFailure={onEditUserFailure}
+      />
+
+      <NotificationPopUp
+        isOpen = {notificationPopupOpen}
+        onClose = {() => setNotificationPopupOpen(false)}
+        message = {notificationMessage}
+      />
+
+      <LoadingModal
+        isOpen = {loadingContentOpen}
+      />
+
+      <div className=''>
+        <table className='w-1/4 border-collapse relative'>
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody className='space-y-3'>
+            <tr className='space-x-4'>
+              <td className='text-xl text-blue-600'>
+              <strong>Name:</strong>
+              </td>
+              <td className='text-xl font-semibold'>
+              {makeFirstLetterUppercase(userData?.data.data.name)}
+              </td>
+            </tr>
+
+            <tr>
+              <td className='text-xl text-blue-600'>
+              <strong>Role:</strong>
+              </td>
+              <td className='text-xl font-semibold bg-blue-200 rounded-md'>
+              {makeFirstLetterUppercase(userData?.data.data.role)}
+              </td>
+            </tr>
+
+            <tr>
+              <td className='text-xl text-blue-600'>
+              <strong>Phone:</strong>
+              </td>
+              <td className='text-xl font-semibold'>
+              {userData?.data.data.phone_number}
+              </td>
+            </tr>
+          </tbody>
+
+          <button
+            className="absolute bottom-0 right-0 translate-x-10 translate-y-1 bg-blue-600 text-white p-1 rounded-lg hover:bg-blue-500"
+            onClick={() => openEditUserForm()}
+          >
+            Edit
+          </button>
+        </table>
+
+        
+      </div>
+
     </div>
   );
 };

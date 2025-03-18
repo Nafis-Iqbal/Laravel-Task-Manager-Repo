@@ -134,13 +134,13 @@ const DashboardPage: React.FC = () => {
               <button onClick={() => filterTasksByPriority('urgent')} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
                 Urgent
               </button>
-              <button onClick={() => filterTasksByPriority('normal')} className="bg-green-400 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
+              <button onClick={() => filterTasksByPriority('normal')} className="bg-green-400 text-white px-4 py-2 rounded-md hover:bg-green-500 transition ml-2">
                 Normal
               </button>
               <button onClick={() => filterTasksByStatus('paused')} className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
                 Paused
               </button>
-              <button onClick={() => filterTasksByStatus('completed')} className="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition ml-2">
+              <button onClick={() => filterTasksByStatus('completed')} className="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 transition ml-2">
                 Completed
               </button>
               <p className="text-green-700 font-semibold">More features to come...</p>

@@ -50,8 +50,6 @@ const LoginPage: React.FC = () => {
   };
 
   const handleGuestLogin = async () => {
-    console.log("Shei mama!");
-
     const response = await loginUser('guest53@example.com', '12345678');
 
     if (response.data?.auth_token) {

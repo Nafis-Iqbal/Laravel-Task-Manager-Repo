@@ -12,16 +12,28 @@ class ProjectController extends Controller
     public function createProject(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|min:4|max:20|unique:projects,title',
+            'title' => 'required|string|min:4|max:20',
             'description' => 'required|string|max:100'
         ]);
+
+        $user = Auth::user();
+
+        /** @var \App\Models\User $user **/
+        $projectTitleExists = $user->projects()->where('projects.title', $validatedData['title'])->exists();
+
+        if($projectTitleExists)
+        {
+            return response()->json([
+                'message' => 'Project creation failed. User already has a project with the same title.',
+                'status' => 'failed',
+                'data' => [] 
+            ]);
+        }
 
         $project = new Project([
             'title' => $validatedData['title'],
             'description' => $validatedData['description']
         ]);
-
-        $user = Auth::user();
 
         $project->user_id = $user->id;
         $project->status = 'active';
@@ -46,6 +58,7 @@ class ProjectController extends Controller
                 return response()->json([
                     'message' => 'Project not found!',
                     'status' => 'failed',
+                    'data' => [] 
                 ], 201);
             }
 
@@ -59,12 +72,12 @@ class ProjectController extends Controller
                 return response()->json([
                     'message' => 'Unauthorised Access!',
                     'status' => 'failed',
+                    'data' => [] 
                 ], 201);
             }
         } else {
             $user = Auth::user();
 
-            /** @var \App\Models\User $user **/
             $projects = $user->projects;
 
             return response()->json([
@@ -75,21 +88,39 @@ class ProjectController extends Controller
         }
     }
 
-    public function updateProject(Request $request, $id)
+    public function updateProject(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|min:4|max:20|unique:projects,title' . $id,
+            'title' => 'required|string|min:4|max:20',
             'description' => 'required|string|max:100',
             'status' => 'required|in:active,completed,paused,cancelled',
-            'progress' => 'integer|min:0|max:100'
+            'progress' => 'integer|min:0|max:100',
+            'id' => 'required|integer'
         ]);
 
         try {
-            $project = Project::findOrFail($id);
+            $project = Project::findOrFail($validatedData['id']);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Project not found.',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
+            ], 201);
+        }
+
+        $user = Auth::user();
+
+        /** @var \App\Models\User $user **/
+        $projectTitleExists = $user->projects()
+        ->where('projects.title', $validatedData['title'])
+        ->where('projects.id', '!=', $validatedData['id'])
+        ->exists();
+
+        if($projectTitleExists){
+            return response()->json([
+                'message' => 'Project update failed. Target title already exists.',
+                'status' => 'failed',
+                'data' => [] 
             ], 201);
         }
 
@@ -119,7 +150,8 @@ class ProjectController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Project not found.',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ], 201);
         }
 

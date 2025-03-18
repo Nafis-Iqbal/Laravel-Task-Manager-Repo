@@ -63,8 +63,10 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === 'end_Date' ? new Date(value) : value,
+      [name]: name === 'end_date' ? new Date(value) : value,
     }));
+
+    console.log(formData);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -168,14 +170,13 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   
             {/* End Date Picker */}
             <div className="mb-4">
-              <label htmlFor="end_Date" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="end_date" className="block text-sm font-medium text-gray-700">
                 End Date
               </label>
               <input
                 type="date"
-                id="end_Date"
-                name="end_Date"
-                //value={formData.end_Date.toISOString()} 
+                id="end_date"
+                name="end_date"
                 value={formData.end_date.toISOString().split('T')[0]} // Convert Date to yyyy-mm-dd
                 onChange={handleChange}
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"

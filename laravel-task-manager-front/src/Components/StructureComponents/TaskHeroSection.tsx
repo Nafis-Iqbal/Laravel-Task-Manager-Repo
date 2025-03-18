@@ -1,4 +1,7 @@
 import React from 'react';
+import { calculateRemainingDays } from '../../Utilities/Utilities';
+import BasicButton from '../ElementComponents/BasicButton';
+import { useNavigate } from 'react-router-dom';
 
 const TaskDetailHeroSection: React.FC<{
     task_id: number,
@@ -7,6 +10,7 @@ const TaskDetailHeroSection: React.FC<{
     project_title: string,
     user_id: number,
     userName: string,
+    end_date: Date,
     customStyle?: string
 }> = ({
     task_id, 
@@ -15,6 +19,7 @@ const TaskDetailHeroSection: React.FC<{
     project_title, 
     user_id, 
     userName,
+    end_date,
     customStyle
 } : {
     task_id: number,
@@ -23,28 +28,42 @@ const TaskDetailHeroSection: React.FC<{
     project_title: string,
     user_id: number,
     userName: string,
+    end_date: Date,
     customStyle?: string
 }) => {
-
     const isGroupProjectTask: boolean = false;
-  return (
-    <div className={`bg-gray-500 p-8 rounded-lg shadow-md ${customStyle}`}>
-        <div className="flex flex-col">
-            <h1 className="text-4xl font-semibold mb-3 bg-blue-400 rounded-lg p-2">{task_title}</h1>
+    const navigate = useNavigate();
 
-            <h3 className="text-2xl font-semibold"># {task_id}</h3>
+  return (
+    <div className={`bg-blue-900 p-8 rounded-lg shadow-md ${customStyle}`}>
+        <div className="flex flex-col">
+            <h1 className="text-4xl font-semibold mb-3 bg-gray-100 rounded-lg p-2 text-gray-700">{task_title}</h1>
+
+            <h3 className="text-2xl font-semibold text-blue-300"># {task_id}</h3>
             
             <div className="min-h-[100px]"></div>
             
             <div className="flex justify-between">
                 <div className="flex flex-col">
-                <p className="pt-2 ml-2 text-xl font-semibold">Belongs to project:</p>
-                    <h2 className="text-2xl bg-blue-400 rounded-lg p-2">{project_title}</h2>
+                    <p className="text-2xl bg-gray-100 rounded-lg p-2 mb-2">Belongs to project:</p>
+
+                    <BasicButton
+                        buttonText={project_title}
+                        buttonColor='blue-500'
+                        textColor='gray-800'
+                        customStyle='text-2xl font-semibold w-fit hover:bg-blue-400'
+                        onClick={() => navigate(`/projects/${project_id}`)}
+                    />
+                </div>
+
+                <div className="flex flex-col">
+                    <h2 className="text-2xl bg-gray-100 rounded-lg p-2">Days till deadline:</h2>
+                    <p className="text-center pt-2 text-xl font-semibold text-blue-300">{calculateRemainingDays(end_date)} days</p>
                 </div>
 
                 {isGroupProjectTask && (<div className="flex flex-col">
-                    <h2 className="text-2xl bg-blue-400 rounded-lg p-2">{userName}</h2>
-                    <p className="text-center pt-2 text-xl font-semibold">{user_id}</p>
+                    <h2 className="text-2xl bg-gray-100 rounded-lg p-2">{userName}</h2>
+                    <p className="text-center pt-2 text-xl font-semibold text-blue-300">{user_id}</p>
                 </div>)}
             </div>
         </div>

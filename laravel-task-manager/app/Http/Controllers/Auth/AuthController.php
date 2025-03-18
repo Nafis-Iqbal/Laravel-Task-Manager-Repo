@@ -38,7 +38,8 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Log in failed!',
-            'status' => 'failed'
+            'status' => 'failed',
+            'data' => [] 
         ], 200);
     }
 

@@ -48,7 +48,8 @@ class TagController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Tag not found.',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 
@@ -67,7 +68,8 @@ class TagController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Tag not found.',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 

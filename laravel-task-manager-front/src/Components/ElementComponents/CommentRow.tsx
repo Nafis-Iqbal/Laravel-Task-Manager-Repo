@@ -25,7 +25,7 @@ export const CommentRow = ({comment_id, commentText, onDelete}:{comment_id: numb
                     textColor="white"
                     onClick={handleDelete}
                     value={comment_id}
-                    customStyle="mr-1"
+                    customStyle="mr-1 my-1"
                 />
             </div>
         </div>

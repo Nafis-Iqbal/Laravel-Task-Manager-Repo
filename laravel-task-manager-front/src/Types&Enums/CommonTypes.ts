@@ -2,10 +2,11 @@ import {priority, statusEnum, role} from "../Types&Enums/Enums";
 
 declare global{
     interface User{
-        id: number;
+        id?: number;
         name: string;
-        email: string;
-        role: role;
+        email?: string;
+        phone_number: string;
+        role?: role;
     }
     
     interface Project{

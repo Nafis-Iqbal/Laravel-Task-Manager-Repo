@@ -27,6 +27,7 @@ class CommentController extends Controller
             return response()->json([
                 'message' => 'Unauthorized access to task',
                 'status' => 'failed',
+                'data' => [] 
             ]);
         }
     }
@@ -60,7 +61,8 @@ class CommentController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'Comment not found.',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 

@@ -28,10 +28,15 @@ const chartData = [
 
 const COLORS = ["#22c55e", "#3b82f6", "#f59e0b"]; // Green, Blue, Orange
 
+const priorityOrder: Record<priority, number> = {
+  [priority.urgent]: 1,
+  [priority.normal]: 2,
+};
+
 const ProjectDetailsPage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(isDebugMode? initialTasks: []);
   const [tasksFetchMessage, setTasksFetchMessage] = useState<string>("");
-  const [isProgressSortAscending, setIsProgressSortAscending] = useState(true);
+  const [isPrioritySortAscending, setIsPrioritySortAscending] = useState(true);
   const [isDateSortAscending, setIsDateSortAscending] = useState(true);
   const navigate = useNavigate();
 
@@ -40,18 +45,23 @@ const ProjectDetailsPage: React.FC = () => {
 
   const {data: projectTasks, isLoading: isTasksByProjectLoading, isError: isTasksLoadingError} = useGetTasksByProjectRQ(
     projectIdNumber, 
-    () => {
+    (responseData) => {
+      if(responseData?.data.status === "failed"){
+        navigate("/resource_not_found");
+      }
     },
     () => {
+      navigate("/resource_not_found");
     }
   );
 
   useEffect(() => {
     setTasks(projectTasks?.data.data);
-    //console.log(projectTasks?.data.data);
+    
     if(isTasksLoadingError){
       setTasksFetchMessage("Failed to load Project Tasks.");
     }
+    
     if(projectTasks?.data.data.length < 1){
       setTasksFetchMessage("No Tasks to show.");
     }
@@ -67,8 +77,11 @@ const ProjectDetailsPage: React.FC = () => {
   };
 
   const sortByPriority = () => {
+    setTasks([...tasks].sort((a, b) => 
+      isPrioritySortAscending? priorityOrder[a.priority] - priorityOrder[b.priority] : priorityOrder[b.priority] - priorityOrder[a.priority]
+    ));
 
-    setIsProgressSortAscending(!isProgressSortAscending);
+    setIsPrioritySortAscending(!isPrioritySortAscending);
   };
 
   return (

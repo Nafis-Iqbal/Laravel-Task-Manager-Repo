@@ -51,7 +51,8 @@ class AdminController extends Controller
         if (Auth::user()->role != 'admin') {
             return response()->json([
                 'message' => 'Unauthorized action!',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => []
             ]);
         }
 
@@ -60,14 +61,16 @@ class AdminController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'User not found!',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 
         if ($userToUpdate->role == 'admin') {
             return response()->json([
                 'message' => 'User is an Admin. Unauthorized action!',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 
@@ -85,7 +88,8 @@ class AdminController extends Controller
         if (Auth::user()->role != 'admin' || Auth::id() == $id) {
             return response()->json([
                 'message' => 'Unauthorized action!',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 
@@ -94,14 +98,16 @@ class AdminController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'User to delete not found!',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 
         if ($userToDelete->role == 'admin') {
             return response()->json([
                 'message' => 'User is an Admin. Unauthorized action!',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ]);
         }
 

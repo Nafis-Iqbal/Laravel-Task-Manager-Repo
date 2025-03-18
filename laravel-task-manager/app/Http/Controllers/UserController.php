@@ -57,6 +57,7 @@ class UserController extends Controller
                 return response()->json([
                     'message' => 'User not found.',
                     'status' => 'failed',
+                    'data' => [] 
                 ], 200);
             }
 
@@ -87,16 +88,19 @@ class UserController extends Controller
 
     public function updateUser(Request $request)
     {
+        //This function handles updating non sensitive info, like name and phone number
+        //So no password confirmation necessary
         $validatedData = $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|string|max:255',
-            'password' => 'required|min:6|confirmed',
+            'phone_number' => 'nullable|string|max:11',
         ]);
 
         $user = Auth::user();
 
         if (!empty($validatedData['name'])) $user->name = $validatedData['name'];
         if (!empty($validatedData['email'])) $user->email = $validatedData['email'];
+        if (!empty($validatedData['phone_number'])) $user->phone_number = $validatedData['phone_number'];
 
         if (!empty($validatedData['password'])) {
             $user->password = Hash::make($validatedData['password']);
@@ -106,7 +110,8 @@ class UserController extends Controller
         $user->save();
 
         return response()->json([
-            'message' => 'User profile updated successfully'
+            'message' => 'User profile updated successfully!',
+            'status' => 'success'
         ], 200);
     }
 
@@ -129,7 +134,8 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'message' => 'Incorrect Password!',
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => [] 
             ], 200);
         }
     }

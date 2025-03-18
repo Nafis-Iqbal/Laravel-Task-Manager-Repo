@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import api from './ApiInstance';
 import { AxiosResponse } from 'axios';
+import { role } from '../../Types&Enums/Enums';
 
 export const fetchUsers = async (): Promise<AxiosResponse> => {
     try{
@@ -80,6 +81,33 @@ export const createUser = async (name: string, email: string, password: string, 
         console.log("Error creating new user");
         throw error;
     }
+}
+
+export const updateUser = async (userInfo: User): Promise<AxiosResponse> => {
+    try{
+        const response = await api.put<ApiResponse<Auth>>("users/update", {
+            ...userInfo
+        });
+
+        return response;
+    }
+    catch(error)
+    {
+        console.log("Error updating user info.");
+        throw error;
+    }
+}
+
+export const useUpdateUserRQ = (onSuccessFn?: (ApiResponse: any) => void, onErrorFn?: () => void) => {
+    return useMutation({
+        mutationFn: updateUser,
+        onSuccess: (data) => {
+            if(onSuccessFn)onSuccessFn(data);
+        },
+        onError: () => {
+            if(onErrorFn)onErrorFn();
+        }
+    });
 }
 
 export const loginUser = async (email: string, password: string): Promise<AxiosResponse> => {

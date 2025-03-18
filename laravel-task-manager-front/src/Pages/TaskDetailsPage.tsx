@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams} from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import { Plus, X, Image } from "lucide-react";
 
 import { generateFakeComments, generateFakeTags } from "../Utilities/FakeData";
@@ -9,6 +9,7 @@ import { useGetAuthenticatedUserRQ } from "../Services/API/UserApi";
 import { useGetTasksRQ, useGetTaskTagsRQ, useUpdateTaskRQ, useAddTaskTags, useDeleteTaskTags } from "../Services/API/TaskApi";
 import { useAddCommentsRQ, useDeleteCommentsRQ, useGetCommentsRQ } from "../Services/API/CommentApi";
 import { useGetTagsRQ } from "../Services/API/TagApi";
+import makeFirstLetterUppercase from "../Utilities/Utilities";
 
 import SelectTagInput from "../Components/ElementComponents/SelectInput";
 import BasicButton from "../Components/ElementComponents/BasicButton";
@@ -53,6 +54,8 @@ const TaskDetailsPage = () => {
   
   const tagsToDeleteRef = useRef<number[]>([]);
 
+  const navigate = useNavigate();
+
   const {taskId} = useParams();
   const taskIdNumber = Number(taskId);
 
@@ -62,11 +65,15 @@ const TaskDetailsPage = () => {
 
   const {data: taskDetail} = useGetTasksRQ(
     taskIdNumber, 
-    () => {
-      setTaskDetailData(taskDetail?.data.data);
+    (responseData) => {
+      if(responseData?.data.status === "failed")
+      {
+        navigate("/resource_not_found");
+      }
+      else setTaskDetailData(taskDetail?.data.data);
     },
     () => {
-
+      navigate("/resource_not_found");
     }
   );
 
@@ -75,6 +82,8 @@ const TaskDetailsPage = () => {
       if(responseData.data.status === "success"){
         queryClient.invalidateQueries(["tasks", taskIdNumber]);
         queryClient.invalidateQueries(["tasks"]);
+
+        if(taskDetailData) queryClient.invalidateQueries(["projects", taskDetailData.project_id]);
       }
 
       setIsTaskStatusSyncing(false);
@@ -252,18 +261,19 @@ const TaskDetailsPage = () => {
   return (
     <div className="max-w-4xl min-h-screen mx-auto p-6 bg-gray-300 rounded-lg shadow-md">
       <TaskDetailHeroSection
-        task_title={taskDetailData ? taskDetailData.title : "Noob"}
+        task_title={taskDetailData ? taskDetailData.title : "Task_Name"}
         task_id={taskIdNumber}
         project_title={taskDetailData?.project_title ? taskDetailData.project_title : "none"}
         project_id={taskDetailData ? taskDetailData.project_id : 0}
         userName={userData?.data.data.name}
         user_id={taskDetailData ? taskDetailData.user_id : 0}
+        end_date={taskDetailData? taskDetailData.end_date : new Date()}
         customStyle="mb-4 bg-blue-200"
       />
       {/* Header */}
       <h1 className="text-2xl font-bold text-gray-800 mb-4">Task Details</h1>
 
-      <div className="flex flex-col bg-white p-4 rounded-lg shadow mb-4">
+      <div className="flex flex-col bg-blue-300 p-4 rounded-lg shadow mb-4">
         <div className="flex justify-between">
           <div className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Task Actions</div>
 
@@ -289,7 +299,7 @@ const TaskDetailsPage = () => {
               <option value={priority.urgent}>Urgent</option>
             </select>
 
-            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{taskDetailData?.priority}</div>
+            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{makeFirstLetterUppercase(taskDetailData?.priority)}</div>
           </div>
 
           <div className="flex items-center w-1/2 bg-gray-300 rounded-lg space-x-1 px-2 py-1">
@@ -308,12 +318,12 @@ const TaskDetailsPage = () => {
               <option value={statusEnum.cancelled}>Cancelled</option>
             </select>
 
-            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{taskDetailData?.status}</div>
+            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{makeFirstLetterUppercase(taskDetailData?.status)}</div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col bg-white p-4 rounded-lg shadow mb-4">
+      <div className="flex flex-col bg-blue-300 p-4 rounded-lg shadow mb-4">
         {/* Task Tags Header */}
         <div className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Task Tags</div>
 
@@ -332,7 +342,7 @@ const TaskDetailsPage = () => {
           ))}
         </div>
 
-        <div className="flex flex-row h-[100px] justify-between">
+        <div className="flex flex-row bg-blue-300 h-[100px] justify-between">
           {/* Tag Selection Button mode*/}
           {!selectTagMode && (
             <div className="w-9/10 h-[100px] contain-content gap-2 bg-white rounded-lg border-gray-100 border-2 mb-2 mr-2">
@@ -388,7 +398,7 @@ const TaskDetailsPage = () => {
       </div>
 
       {/* Comments Section */}
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div className="bg-blue-300 p-4 rounded-lg shadow">
         <h2 className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Comments</h2>
         <table className="w-full">
           <thead>
