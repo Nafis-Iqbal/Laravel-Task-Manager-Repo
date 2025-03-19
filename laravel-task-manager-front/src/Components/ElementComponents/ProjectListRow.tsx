@@ -8,9 +8,9 @@ const ProjectListRow = ({ project, onDelete }: { project: Project, onDelete: () 
     <tr
       className="border-b hover:bg-gray-100 transition cursor-pointer"
     >
-      <td className="p-4" onClick={() => navigate(`/projects/${project.id}`)}>{project.title}</td>
-      <td className="p-4" onClick={() => navigate(`/projects/${project.id}`)}>{project.description}</td>
-      <td className="p-3 flex justify-between space-x-2 items-center">
+      <td className="p-1 md:p-2 text-sm md:text-base text-center" onClick={() => navigate(`/projects/${project.id}`)}>{project.title}</td>
+      <td className="px-4 md:p-2 text-sm md:text-base truncate" onClick={() => navigate(`/projects/${project.id}`)}>{project.description}</td>
+      <td className="p-3 flex justify-between space-x-0 md:space-x-2 items-center">
         <div className="relative flex-grow-[4] basis-0 h-3 bg-gray-300 rounded-full" onClick={() => navigate(`/projects/${project.id}`)}>
           <div
             className="absolute top-0 left-0 h-full bg-blue-500 rounded-full"

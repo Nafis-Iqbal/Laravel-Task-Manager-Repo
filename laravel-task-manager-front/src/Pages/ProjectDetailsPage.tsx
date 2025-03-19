@@ -85,19 +85,19 @@ const ProjectDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl min-h-screen mx-auto p-6 text-white bg-gray-200">
+    <div className="max-w-4xl min-h-screen mx-auto p-2 md:p-6 text-white bg-gray-200">
       {/* Hero Section */}
       <ProjectHeroSection projectTasks={tasks}/>
 
       {/* Task Table Section */}
       <div className="mt-6 bg-white text-gray-800 p-6 rounded-xl shadow-xl">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Project Tasks</h2>
-          <div className="space-x-2">
-            <button onClick={sortByDueDate} className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+          <h2 className="text-xl text-blue-900 md:text-2xl font-bold">Project Tasks</h2>
+          <div className="flex space-x-2">
+            <button onClick={sortByDueDate} className="text-sm md:text-base bg-blue-500 text-white px-2 md:px-4 py-2 rounded-lg hover:bg-blue-600">
               Sort by Due Date
             </button>
-            <button onClick={sortByPriority} className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+            <button onClick={sortByPriority} className="text-sm md:text-base bg-green-500 text-white px-2 md:px-4 py-2 rounded-lg hover:bg-green-600">
               Sort by Priority
             </button>
           </div>
@@ -105,13 +105,13 @@ const ProjectDetailsPage: React.FC = () => {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="table-fixed w-[100%] text-center border-collapse">
             <thead>
               <tr className="bg-gray-100 text-gray-700">
-                <th className="p-3">Task Name</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Priority</th>
-                <th className="p-3">Due Date</th>
+                <th className="p-1 md:p-3 w-[30%]">Task Name</th>
+                <th className="p-1 md:p-3 w-[20%]">Status</th>
+                <th className="p-1 md:p-3 w-[20%]">Priority</th>
+                <th className="p-1 md:p-3 w-[30%]">Due Date</th>
               </tr>
             </thead>
             <tbody>

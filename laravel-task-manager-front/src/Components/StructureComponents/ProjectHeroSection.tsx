@@ -19,18 +19,20 @@ export const ProjectHeroSection = ({projectTasks} : {projectTasks: Task[]}) => {
 
     return (
         <div className="bg-white text-gray-800 p-6 rounded-xl shadow-xl">
-            <h1 className="text-3xl font-bold mb-4 text-center">Project Dashboard</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-4 text-center">Project Dashboard</h1>
             <div className="flex justify-center">
-                <ResponsiveContainer width={400} height={250}>
-                <PieChart>
-                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
-                    {chartData.map((entry, index) => (
-                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                    </Pie>
-                    <Tooltip />
-                </PieChart>
-                </ResponsiveContainer>
+                <div className="w-full h-[180px] md:h-[250px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80}>
+                                {chartData.map((entry, index) => (
+                                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
         </div>
     );

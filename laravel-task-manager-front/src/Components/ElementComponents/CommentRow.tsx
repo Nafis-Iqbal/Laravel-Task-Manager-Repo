@@ -10,24 +10,41 @@ export const CommentRow = ({comment_id, commentText, onDelete}:{comment_id: numb
         onDelete();
     }
 
-    return (
-        <div className="flex justify-between items-center bg-gray-100 rounded-lg">
-            <p className="ml-4">{commentText}</p>
+    const onCommentDetail = () => {
 
-            <div className="flex">
-                <LoadingSpinnerBlock
-                    customStyle="h-[25px] mr-4"
-                    isOpen={isSpinnerActive}
-                />
-                <BasicButton
-                    buttonText="Delete"
-                    buttonColor="red-500"
-                    textColor="white"
-                    onClick={handleDelete}
-                    value={comment_id}
-                    customStyle="mr-1 my-1"
-                />
-            </div>
-        </div>
+    }
+
+    return (
+        <tr className="pb-1">
+            <td className="flex justify-between items-center w-[100%] mb-1 bg-gray-100 rounded-lg">
+                <p className="w-[75%] md:w-[80%] ml-2 md:ml-4 text-sm md:text-base truncate">{commentText}</p>
+
+                <div className="flex justify-between w-[25%] md:w-[20%]">
+                    <BasicButton
+                        buttonText="Delete"
+                        buttonColor="red-500"
+                        textColor="white"
+                        onClick={handleDelete}
+                        value={comment_id}
+                        customStyle="p-1 mr-1 my-1 text-sm md:text-base w-[50%]"
+                    />
+
+                    <LoadingSpinnerBlock
+                        customStyle="w-8 mr-1 md:mr-4"
+                        isOpen={isSpinnerActive}
+                    />
+
+                    {!isSpinnerActive && (
+                        <BasicButton
+                            buttonText="i"
+                            customStyle="p-1 mr-1 my-1 w-[50%] text-sm md:text-base disabled:bg-gray-600"
+                            buttonColor="blue-600"
+                            textColor="white"
+                            onClick={() => onCommentDetail()}
+                        />
+                    )}
+                </div>
+            </td>
+        </tr>
     );
 }

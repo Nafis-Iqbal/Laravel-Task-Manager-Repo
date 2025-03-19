@@ -43,7 +43,7 @@ const UserInfo = ({profilePicture} : {profilePicture: string}) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg space-y-3 shadow-md">
+    <div className="bg-white p-3 md:p-6 rounded-lg space-y-3 shadow-md">
       <h3 className="mb-4 text-2xl font-bold text-blue-900">User Info</h3>
       <ProfilePicture src={profilePicture} customStyle="mb-2"/>
 
@@ -76,7 +76,7 @@ const UserInfo = ({profilePicture} : {profilePicture: string}) => {
           </thead>
           <tbody className='space-y-3'>
             <tr className='space-x-4'>
-              <td className='text-xl text-blue-600'>
+              <td className='text-lg md:text-xl text-blue-600'>
               <strong>Name:</strong>
               </td>
               <td className='text-xl font-semibold'>
@@ -85,7 +85,7 @@ const UserInfo = ({profilePicture} : {profilePicture: string}) => {
             </tr>
 
             <tr>
-              <td className='text-xl text-blue-600'>
+              <td className='text-lg md:text-xl text-blue-600'>
               <strong>Role:</strong>
               </td>
               <td className='text-xl font-semibold bg-blue-200 rounded-md'>
@@ -94,7 +94,7 @@ const UserInfo = ({profilePicture} : {profilePicture: string}) => {
             </tr>
 
             <tr>
-              <td className='text-xl text-blue-600'>
+              <td className='text-lg md:text-xl text-blue-600'>
               <strong>Phone:</strong>
               </td>
               <td className='text-xl font-semibold'>

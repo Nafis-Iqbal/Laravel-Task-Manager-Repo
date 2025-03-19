@@ -129,15 +129,15 @@ const TasksListPage = () => {
   }
   
   return (
-    <div className="max-w-4xl min-h-screen mx-auto p-6 bg-gray-100 rounded-lg shadow-md">
-      <div className="flex justify-between items-center rounded-t-md p4 bg-gray-200">
-        <h1 className="text-2xl font-bold text-gray-800 my-2 ml-3">Tasks List</h1>
+    <div className="max-w-4xl min-h-screen mx-auto p-3 md:p-6 bg-gray-100 rounded-lg shadow-md">
+      <div className="flex justify-between items-center rounded-t-md bg-gray-200">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800 my-2 ml-3">Tasks List</h1>
         <BasicButton
           buttonText="Create New Task"
           buttonColor="green-500"
           textColor="white"
           onClick={openCreateTaskForm}
-          customStyle="mr-2"
+          customStyle="px-2 py-2 mr-2 text-sm md:text-base"
         />
       </div>
 
@@ -162,14 +162,14 @@ const TasksListPage = () => {
 
       <ScrollToTopButton/>
       
-      <div className="bg-white p-4 rounded-lg shadow-md overflow-x-auto">
-        <table className="table-fixed w-full border-collapse">
+      <div className="bg-white p-1 md:p-4 rounded-lg shadow-md overflow-x-auto">
+        <table className="table-fixed w-[100%] border-collapse">
           <thead>
             <tr className="bg-gray-200 border-color-red">
-              <th className="p-4 w-2/10 text-left">Task Title</th>
-              <th className="p-4 w-5/10 text-left">Description</th>
-              <th className="p-4 w-1/10 text-center">Project ID</th>
-              <th className="p-4 w-2/10 text-center">Actions</th>
+              <th className="w-[20%] py-2 md:py-4 text-center text-sm md:text-base">Task Title</th>
+              <th className="w-[40%] p-2 md:p-4 text-center text-sm md:text-base">Description</th>
+              <th className="w-[15%] p-2 md:p-4 text-center text-sm md:text-base">Project ID</th>
+              <th className="w-[25%] p-2 md:p-4 text-center text-sm md:text-base">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -190,7 +190,7 @@ const TasksListPage = () => {
           buttonColor="green-500"
           textColor="white"
           onClick={openCreateTaskForm}
-          customStyle="pt-2 mt-1 mr-2 mb-1"
+          customStyle="px-2 py-2 pt-2 mt-1 mr-2 mb-1 text-sm md:text-base"
         />
         )}
       </div>

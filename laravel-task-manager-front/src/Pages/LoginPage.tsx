@@ -67,8 +67,8 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-md mx-auto p-6 bg-black rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-white mb-6">
+      <div className="w-[90%] md:max-w-md mx-auto p-6 bg-black rounded-lg shadow-lg">
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-6">
           {isRegistering ? 'Create an Account' : 'Login to Your Account'}
         </h2>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate} from "react-router-dom";
-import { Plus, X, Image } from "lucide-react";
+import { Plus, Image } from "lucide-react";
 
 import { generateFakeComments, generateFakeTags } from "../Utilities/FakeData";
 import debounce from "lodash/debounce";
@@ -10,14 +10,16 @@ import { useGetTasksRQ, useGetTaskTagsRQ, useUpdateTaskRQ, useAddTaskTags, useDe
 import { useAddCommentsRQ, useDeleteCommentsRQ, useGetCommentsRQ } from "../Services/API/CommentApi";
 import { useGetTagsRQ } from "../Services/API/TagApi";
 import makeFirstLetterUppercase from "../Utilities/Utilities";
+import { priority, statusEnum } from "../Types&Enums/Enums";
 
 import SelectTagInput from "../Components/ElementComponents/SelectInput";
 import BasicButton from "../Components/ElementComponents/BasicButton";
 import PhotoDisplayModal from "../Components/Modals/PhotoModal";
 import TaskDetailHeroSection from "../Components/StructureComponents/TaskHeroSection";
 import LoadingSpinnerBlock from "../Components/LoadingSpinnerBlock";
+import NotificationPopUp from "../Components/Modals/NotificationPopUpModal";
+import LoadingModal from "../Components/Modals/LoadingContentModal";
 import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
-import { priority, statusEnum } from "../Types&Enums/Enums";
 
 const isDebugMode: boolean = false;
 const maxTagsPerTask: number = 10;
@@ -48,6 +50,10 @@ const TaskDetailsPage = () => {
   const [taskCommentsFetchMessage, setTaskCommentsFetchMessage] = useState<string>("");
   const [newComment, setNewComment] = useState("");
   const [isAddCommentSyncing, setIsAddCommentSyncing] = useState(false);
+
+  const [loadingContentOpen, setLoadingContentOpen] = useState(false);
+  const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState<string>("");
 
   const [isShowPhotoOpen, setIsShowPhotoOpen] = useState(false);
   const [images, setImages] = useState<string[]>(imageFiles);
@@ -161,15 +167,29 @@ const TaskDetailsPage = () => {
   );
 
   const {mutate: addTaskCommentMutate, isLoading} = useAddCommentsRQ(
-    () => {
-      setComments([...comments, { id: comments.length + 1, comment: newComment }]);
-      setNewComment("");
+    (responseData) => {
+      if(responseData.data.status === "success")
+      {
+        setComments([...comments, { id: comments.length + 1, comment: newComment }]);
+        setNewComment("");
+  
+        queryClient.invalidateQueries(["comments", taskIdNumber]);
+        setIsAddCommentSyncing(false);
+      }
+      else{
+        setNewComment("");
+        setIsAddCommentSyncing(false);
 
-      queryClient.invalidateQueries(["comments", taskIdNumber]);
-      setIsAddCommentSyncing(false);
+        setNotificationMessage("Error adding task comments. Comment too long.");
+        setNotificationPopupOpen(true);
+      }
     },
     () => {
+      setNewComment("");
       setIsAddCommentSyncing(false);
+
+      setNotificationMessage("Error adding task comments. Comment too long.");
+      setNotificationPopupOpen(true);
     }
   );
 
@@ -259,7 +279,7 @@ const TaskDetailsPage = () => {
   };
 
   return (
-    <div className="max-w-4xl min-h-screen mx-auto p-6 bg-gray-300 rounded-lg shadow-md">
+    <div className="max-w-4xl min-h-screen mx-auto p-2 md:p-6 bg-gray-300 rounded-lg shadow-md">
       <TaskDetailHeroSection
         task_title={taskDetailData ? taskDetailData.title : "Task_Name"}
         task_id={taskIdNumber}
@@ -270,12 +290,23 @@ const TaskDetailsPage = () => {
         end_date={taskDetailData? taskDetailData.end_date : new Date()}
         customStyle="mb-4 bg-blue-200"
       />
-      {/* Header */}
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">Task Details</h1>
 
-      <div className="flex flex-col bg-blue-300 p-4 rounded-lg shadow mb-4">
+      <NotificationPopUp
+        isOpen = {notificationPopupOpen}
+        onClose = {() => setNotificationPopupOpen(false)}
+        message = {notificationMessage}
+      />
+
+      <LoadingModal
+        isOpen = {loadingContentOpen}
+      />
+
+      {/* Header */}
+      <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-4">Task Details</h1>
+
+      <div className="flex flex-col bg-blue-300 p-2 md:p-4 rounded-lg shadow mb-4">
         <div className="flex justify-between">
-          <div className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Task Actions</div>
+          <div className="text-base md:text-lg w-fit p-3 mb-1 bg-gray-50 font-bold rounded-lg">Task Actions</div>
 
           {isTaskStatusSyncing? (
             <LoadingSpinnerBlock isOpen={true} customStyle="w-10"/>
@@ -284,33 +315,33 @@ const TaskDetailsPage = () => {
           )}
         </div>
 
-        <div className="flex space-x-3">
-          <div className="flex items-center w-1/2 bg-gray-300 rounded-lg space-x-1 px-2 py-1">
-            <div className="w-1/3 p-2 bg-gray-50 text-green-700 font-semibold rounded-md">Switch Priority</div>
+        <div className="flex space-x-1 md:space-x-3">
+          <div className="flex flex-col md:flex-row items-center w-[50%] bg-gray-300 rounded-lg space-y-1 md:space-x-1 md:space-y-0 px-2 py-1">
+            <div className="md:w-[33%] p-2 bg-gray-100 text-green-700 font-semibold rounded-md">Switch Priority</div>
 
             <select
               id="priority"
               name="priority"
               value={taskDetailData?.priority}
               onChange={handleTaskPriorityChange}
-              className="block w-1/3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="block md:w-[33%] p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value={priority.normal}>Normal</option>
               <option value={priority.urgent}>Urgent</option>
             </select>
 
-            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{makeFirstLetterUppercase(taskDetailData?.priority)}</div>
+            <div className="md:w-[33%] p-2 text-green-700 font-semibold rounded-md text-xl md:text-2xl text-center">{makeFirstLetterUppercase(taskDetailData?.priority)}</div>
           </div>
 
-          <div className="flex items-center w-1/2 bg-gray-300 rounded-lg space-x-1 px-2 py-1">
-            <div className="w-1/3 p-2 bg-gray-100 text-green-700 font-semibold rounded-md">Update Status</div>
+          <div className="flex flex-col md:flex-row items-center w-[50%] bg-gray-300 rounded-lg space-y-1 md:space-x-1 md:space-y-0 px-2 py-1">
+            <div className="md:w-[33%] p-2 bg-gray-100 text-green-700 font-semibold rounded-md">Update Status</div>
 
             <select
               id="project_id"
               name="project_id"
               value={taskDetailData?.status}
               onChange={handleTaskStatusChange}
-              className="block w-1/3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="block md:w-[33%] p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
             >
               <option value={statusEnum.active}>Active</option>
               <option value={statusEnum.paused}>Paused</option>
@@ -318,19 +349,19 @@ const TaskDetailsPage = () => {
               <option value={statusEnum.cancelled}>Cancelled</option>
             </select>
 
-            <div className="w-1/3 p-2 text-green-700 font-semibold rounded-md text-2xl text-center">{makeFirstLetterUppercase(taskDetailData?.status)}</div>
+            <div className="md:w-[33%] p-2 text-green-700 font-semibold rounded-md text-xl md:text-2xl text-center">{makeFirstLetterUppercase(taskDetailData?.status)}</div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col bg-blue-300 p-4 rounded-lg shadow mb-4">
+      <div className="flex flex-col bg-blue-300 p-2 md:p-4 rounded-lg shadow mb-4">
         {/* Task Tags Header */}
-        <div className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Task Tags</div>
+        <div className="bg-gray-50 w-fit p-3 mb-1 text-base md:text-lg font-bold rounded-lg">Task Tags</div>
 
         {/* Task Tags */}
         <div className="h-[100px] gap-2 contain-content bg-white rounded-lg border-gray-100 border-2 mb-2">
           {selectedTags && selectedTags.length > 0 && selectedTags.map((tag) => (
-            <div className="relative p-2 mr-1 mt-1 inline-block text-white bg-green-500 rounded-md" key={tag.id}>
+            <div className="relative p-1 md:p-2 mr-1 mt-1 text-sm md:text-base inline-block text-white bg-green-500 rounded-md" key={tag.id}>
               {tag.title}
               <BasicButton
                 buttonText="X"
@@ -353,7 +384,7 @@ const TaskDetailsPage = () => {
                   buttonColor="red-500"
                   textColor="white"
                   onClick={addTaskTag}
-                  customStyle="mb-1 mt-1 mr-1"
+                  customStyle="mb-1 mt-1 mr-1 text-sm md:text-base p-1 md:p-2"
                   value={tag}
                 />
               ))}
@@ -386,7 +417,7 @@ const TaskDetailsPage = () => {
               textColor="white"
               buttonColor="green-500"
               onClick={() => {setSelectTagMode(!selectTagMode)}}
-              customStyle="h-[40px]"
+              customStyle="h-[40px] text-sm md:text-base px-1 py-1"
             />
 
             <LoadingSpinnerBlock
@@ -398,15 +429,15 @@ const TaskDetailsPage = () => {
       </div>
 
       {/* Comments Section */}
-      <div className="bg-blue-300 p-4 rounded-lg shadow">
-        <h2 className="bg-gray-50 w-1/5 p-3 mb-1 text-lg font-bold rounded-lg">Comments</h2>
-        <table className="w-full">
+      <div className="flex flex-col bg-blue-300 p-2 md:p-4 rounded-lg shadow">
+        <h2 className="bg-gray-50 w-fit p-3 mb-1 text-base md:text-lg font-bold rounded-lg">Comments</h2>
+        <table className="table-fixed w-[100%] border-space-y-1">
           <thead>
             <tr>
               <th></th>
             </tr>
           </thead>
-          <tbody className="space-y-2">
+          <tbody className="">
             <TableDataBlock
               dataList={comments}
               isDataLoading={taskCommentsLoading}
@@ -418,13 +449,13 @@ const TaskDetailsPage = () => {
         </table>
 
         {/* Add Comment Form */}
-        <form onSubmit={handleAddComment} className="mt-4 flex gap-2">
+        <form onSubmit={handleAddComment} className="mt-2 md:mt-4 flex gap-2">
           <input
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
-            className="flex-1 p-2 border rounded-md"
+            className="flex-1 p-2 border rounded-md text-sm md:text-base"
           />
 
           {isAddCommentSyncing? (
@@ -435,7 +466,7 @@ const TaskDetailsPage = () => {
           
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="bg-blue-600 text-white text-sm md:text-base px-2 md:px-4 py-1 md:py-2 rounded-md hover:bg-blue-700"
           >
             Add
           </button>

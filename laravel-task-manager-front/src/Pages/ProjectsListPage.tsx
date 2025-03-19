@@ -100,15 +100,15 @@ const ProjectsListPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 min-h-screen bg-gray-100 rounded-lg shadow-md">
-      <div className="flex justify-between bg-gray-200 mt-2 rounded-t-md">
-        <h1 className="text-2xl font-bold text-gray-800 my-2 ml-3">Projects List</h1>
+    <div className="max-w-4xl min-h-screen mx-auto p-3 md:p-6 bg-gray-100 rounded-lg shadow-md">
+      <div className="flex justify-between items-center bg-gray-200 mt-2 rounded-t-md">
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800 my-2 ml-3">Projects List</h1>
         <BasicButton
           buttonText="Create New Project"
           buttonColor="green-500"
           textColor="white"
           onClick={openCreateProjectForm}
-          customStyle="m-1"
+          customStyle="px-2 py-2 mr-2 text-sm md:text-base"
         />
       </div>
 
@@ -132,13 +132,13 @@ const ProjectsListPage = () => {
 
       <ScrollToTopButton/>
 
-      <div className="bg-white p-4 rounded-lg shadow-md overflow-x-auto">
-        <table className="w-full border-collapse">
+      <div className="bg-white p-1 md:p-4 rounded-lg shadow-md overflow-x-auto">
+        <table className="table-fixed w-[100%] border-collapse">
           <thead>
             <tr className="bg-gray-200">
-              <th className="p-4 text-left">Project Title</th>
-              <th className="p-4 w-1/2 text-left">Description</th>
-              <th className="p-4 text-center">Progress</th>
+              <th className="w-[20%] py-2 md:py-4 text-center text-sm md:text-base">Project Title</th>
+              <th className="w-[50%] p-2 md:p-4 text-center text-sm md:text-base">Description</th>
+              <th className="w-[30%] p-2 md:p-4 text-center text-sm md:text-base">Progress</th>
             </tr>
           </thead>
           <tbody>
@@ -159,7 +159,7 @@ const ProjectsListPage = () => {
           buttonColor="green-500"
           textColor="white"
           onClick={openCreateProjectForm}
-          customStyle="pb-3 m-1"
+          customStyle="px-2 py-2 pb-3 m-1"
         />
       )}
       </div>

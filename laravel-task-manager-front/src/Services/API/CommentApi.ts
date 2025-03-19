@@ -44,11 +44,11 @@ export const addComment = async (task_id: number, comment: string): Promise<Axio
     }
 }
 
-export const useAddCommentsRQ = (onSuccessFn: () => void, onErrorFn: () => void) => {
+export const useAddCommentsRQ = (onSuccessFn: (ApiResponse: any) => void, onErrorFn: () => void) => {
     return useMutation({
         mutationFn: ({task_id, comment}: {task_id: number, comment: string}) => addComment(task_id, comment),
-        onSuccess: () => {
-            onSuccessFn();
+        onSuccess: (data) => {
+            onSuccessFn(data);
         },
         onError: () => {
             onErrorFn();

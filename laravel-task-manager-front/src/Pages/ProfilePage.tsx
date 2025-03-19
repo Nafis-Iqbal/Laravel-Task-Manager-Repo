@@ -137,7 +137,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-8 min-h-screen space-y-4 bg-gray-200">
+    <div className="max-w-4xl mx-auto p-4 md:p-8 min-h-screen space-y-4 bg-gray-200">
       <ProfileHeroSection tasks={tasksData} projects={projectsData}/>
 
       <UserInfo profilePicture={profilePicture}/>
@@ -166,13 +166,14 @@ const ProfilePage: React.FC = () => {
         <Link to="/projects">
           <BasicTextDiv
             displayText='Show Projects'
-            customStyle='rounded-lg bg-green-500 text-white p-3 shadow-md'
+            customStyle='rounded-lg bg-green-500 text-white p-2 md:p-3 shadow-md'
           />
         </Link>
+
         <Link to="/tasks">
           <BasicTextDiv
             displayText='Show Tasks'
-            customStyle='rounded-lg bg-green-500 text-white p-3 shadow-md'
+            customStyle='rounded-lg bg-green-500 text-white p-2 md:p-3 shadow-md'
           />
         </Link>
       </div >
@@ -181,21 +182,21 @@ const ProfilePage: React.FC = () => {
 
       {/* Tag Creation Panel */}
       <div id="tag_section" className="relative flex flex-col justify-left items-center bg-gray-100 rounded-lg pt-4 pb-10">
-        <h1 className="text-gray-800 pl-3 pb-2 font-bold text-xl">Tag Manager</h1>
+        <h1 className="text-gray-800 pl-3 pb-2 font-bold text-lg md:text-xl">Tag Manager</h1>
         <table className="w-full border-collapse space-y-1">
           <thead>
-            <tr className="bg-gray-400 w-full">
-              <th className="px-4 py-2 w-2/10 rounded-tl-md">Tag Title</th>
-              <th className="px-4 py-2 w-3/10">Edit</th>
-              <th className="px-4 py-2 w-1/10"></th>
-              <th className="px-4 py-2 w-2/10">Actions</th>
-              <th className="px-4 py-2 w-2/10 rounded-tr-md">
+            <tr className="bg-gray-400 w-[100%]">
+              <th className="px-4 py-2 w-[20%] rounded-tl-md">Tag Title</th>
+              <th className="px-4 py-2 w-[30%]">Edit</th>
+              <th className="px-4 py-2 w-[10%]"></th>
+              <th className="px-4 py-2 w-[20%]">Actions</th>
+              <th className="px-4 py-2 w-[20%] rounded-tr-md">
                 <BasicButton
                   buttonText="Create New Tag"
                   buttonColor="green-600"
                   textColor="white"
                   onClick={() => openCreateTagForm()}
-                  customStyle="hover:bg-green-700"
+                  customStyle="hover:bg-green-700 p-2 text-sm md:text-base"
                 />
               </th>
             </tr>
