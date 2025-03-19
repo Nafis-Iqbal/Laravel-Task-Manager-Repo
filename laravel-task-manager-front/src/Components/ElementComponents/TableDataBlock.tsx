@@ -28,7 +28,7 @@ export const TableDataBlock = <T extends {id: number}>({dataList, dataFetchMessa
             </tr>
         );
     }
-    //console.log(dataList);
+    
     if(dataList && dataList.length > 0)
     {
         //Project List

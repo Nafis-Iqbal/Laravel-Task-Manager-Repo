@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import { queryClient } from '../Services/API/ApiInstance';
 import { useGetAuthenticatedUserRQ } from '../Services/API/UserApi';
 import ProfilePicture from './StructureComponents/ProfilePicture';
@@ -6,17 +6,18 @@ import makeFirstLetterUppercase from '../Utilities/Utilities';
 import EditUserModal from '../Components/Modals/EditUserInfoModal';
 import LoadingModal from '../Components/Modals/LoadingContentModal';
 import NotificationPopUp from '../Components/Modals/NotificationPopUpModal';
+import { checkIfSubstring } from '../Utilities/Utilities';
 
 const UserInfo = ({profilePicture} : {profilePicture: string}) => {
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
-    const [loadingContentOpen, setLoadingContentOpen] = useState(false);
-    const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
-    const [notificationMessage, setNotificationMessage] = useState<string>("");
+  const [canEditInfo, setCanEditInfo] = useState(true); 
+  const [loadingContentOpen, setLoadingContentOpen] = useState(false);
+  const [notificationPopupOpen, setNotificationPopupOpen] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState<string>("");
 
   const {data: userData} = useGetAuthenticatedUserRQ();
 
   const openEditUserForm = () => {
-    console.log("bichi");
     setIsEditUserOpen(true);
   }
 
@@ -41,6 +42,12 @@ const UserInfo = ({profilePicture} : {profilePicture: string}) => {
     setNotificationPopupOpen(true);
     setNotificationMessage(popUpMessage);
   }
+
+  useEffect(() => {
+    if(checkIfSubstring(userData?.data.data.name ?? '', "Guest")){
+      setCanEditInfo(false);
+    }
+  },[userData]);
 
   return (
     <div className="bg-white p-3 md:p-6 rounded-lg space-y-3 shadow-md">
@@ -103,12 +110,12 @@ const UserInfo = ({profilePicture} : {profilePicture: string}) => {
             </tr>
           </tbody>
 
-          <button
+          {canEditInfo && (<button
             className="absolute bottom-0 right-0 translate-x-10 translate-y-1 bg-blue-600 text-white p-1 rounded-lg hover:bg-blue-500"
             onClick={() => openEditUserForm()}
           >
             Edit
-          </button>
+          </button>)}
         </table>
 
         

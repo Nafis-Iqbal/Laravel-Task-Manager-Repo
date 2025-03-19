@@ -55,7 +55,7 @@ const CreateTagModal: React.FC<CreateTagModalProps> = ({
         e.preventDefault();
 
         onSubmit();
-        //console.log(formData);
+        
         createTaskTagMutate(formData);
         onClose();
     }
@@ -72,7 +72,7 @@ const CreateTagModal: React.FC<CreateTagModalProps> = ({
     if (!isOpen) return null;
 
     return(
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 backdrop-blur-sm z-50">
+        <div className="fixed inset-0 -top-4 flex justify-center items-center bg-gray-800 bg-opacity-50 backdrop-blur-sm z-50">
         <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-lg">
           <h2 className="text-2xl font-semibold mb-4">Create Tag</h2>
   

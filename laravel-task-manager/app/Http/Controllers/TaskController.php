@@ -14,17 +14,40 @@ use Illuminate\Support\Facades\Auth;
 class TaskController extends Controller
 {
     // Create a new task in the database
-    public function createTask(Request $request, $projectId)
+    public function createTask(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'required|min:4|max:20',
             'description' => 'required|max:100',
             'priority' => 'required|in:normal,urgent',
             'status' => 'required|in:active,completed,paused,cancelled',
-            'end_date' => 'required|date'
+            'end_date' => 'required|date',
+            'project_id' => 'nullable|numeric'
         ]);
 
         $user = Auth::user();
+
+        if($validatedData['project_id'] == 0)
+        {
+            $projectCount = $user->projects->count();
+
+            if($projectCount < 1)
+            {
+                $project = new Project([
+                    'title' => 'Project 1',
+                    'description' => 'New instant project.'
+                ]);
+        
+                $project->user_id = $user->id;
+                $project->status = 'active';
+                $project->progress = 0;
+                $project->end_date = $request->end_Date;
+        
+                $project->save();
+
+                $validatedData['project_id'] = $project->id;
+            }
+        }
 
         /** @var \App\Models\User $user **/
         $taskTitleExists = $user->tasks()->where('tasks.title', $validatedData['title'])->exists();
@@ -45,7 +68,7 @@ class TaskController extends Controller
 
         $task->status = $validatedData['status'];
         $task->priority = $validatedData['priority'];
-        $task->project_id = $projectId;
+        $task->project_id = $validatedData['project_id'];
         $task->end_date = $validatedData['end_date'];
         $task->user_id = $user->id; // Assign the task to the logged-in user
 

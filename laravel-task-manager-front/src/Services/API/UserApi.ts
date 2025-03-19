@@ -48,7 +48,7 @@ export const useFetchUserRQ = (user_id: number, onSuccessFn: () => void, onError
 export const getAuthenticatedUser = async (numbe: number): Promise<AxiosResponse> => {
     try{
         const response = await api.get<ApiResponse<User>>("user");
-        console.log(response.data.data);
+        
         return response;
     }
     catch(error)

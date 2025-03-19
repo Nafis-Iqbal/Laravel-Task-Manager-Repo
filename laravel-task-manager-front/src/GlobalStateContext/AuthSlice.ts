@@ -29,6 +29,7 @@ const authSlice = createSlice({
       state.user_id = null;
       state.token = null;
       sessionStorage.removeItem('auth_token');
+      sessionStorage.removeItem('user_name');
       sessionStorage.setItem('isAuthenticated', "false");
     },
   },

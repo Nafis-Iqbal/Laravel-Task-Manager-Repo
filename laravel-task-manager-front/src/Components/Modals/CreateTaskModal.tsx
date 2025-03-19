@@ -65,8 +65,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       ...prevData,
       [name]: name === 'end_date' ? new Date(value) : value,
     }));
-
-    console.log(formData);
   };
 
   const handleSubmit = (e: React.FormEvent) => {

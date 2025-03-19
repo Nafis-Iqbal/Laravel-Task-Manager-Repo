@@ -5,6 +5,7 @@ import { generateFakeTasks } from "../Utilities/FakeData";
 import {useGetTasksRQ, useDeleteTaskRQ} from "../Services/API/TaskApi";
 import { useGetProjectsRQ } from "../Services/API/ProjectApi";
 import { queryClient } from "../Services/API/ApiInstance";
+import { checkIfSubstring } from "../Utilities/Utilities";
 
 import BasicButton from "../Components/ElementComponents/BasicButton";
 import ScrollToTopButton from "../Components/StructureComponents/ScrollToTopButton";
@@ -25,6 +26,7 @@ if(isDebugMode){
 
 const TasksListPage = () => {
   const location = useLocation();
+  const [isGuestUser] = useState(checkIfSubstring(sessionStorage.getItem('user_name') ?? '', 'Guest'));
 
   const [tasks, setTasks] = useState<Task[]>(initialTasks ?? []);
   const [tasksFetchMessage, setTasksFetchMessage] = useState<string>("");
@@ -119,8 +121,18 @@ const TasksListPage = () => {
   }
 
   const onTaskDelete = (task_id: number) => {
-    setLoadingContentOpen(true);
-    deleteTaskMutate(task_id);
+    if(!isGuestUser){
+      setLoadingContentOpen(true);
+      deleteTaskMutate(task_id);
+    }
+    else if(tasks.length < 5){
+      setNotificationPopupOpen(true);
+      setNotificationMessage("Guest users aren't allowed to delete tasks when total tasks are less than 5");
+    }
+    else{
+      setLoadingContentOpen(true);
+      deleteTaskMutate(task_id);
+    }
   }
 
   const openNotificationPopUpMessage = (popUpMessage: string) => {

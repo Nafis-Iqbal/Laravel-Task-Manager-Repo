@@ -71,7 +71,7 @@ export const useGetTasksByProjectRQ = (project_id: number, onSuccessFn: (ApiResp
 
 export const createTask = async (task: Task): Promise<AxiosResponse> => {
     try{
-        const response = await api.post<ApiResponse<string>>(`tasks/create/${task.project_id}`, {
+        const response = await api.post<ApiResponse<string>>("tasks/create", {
             ...task
         });
 

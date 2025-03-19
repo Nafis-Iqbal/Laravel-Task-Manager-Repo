@@ -47,7 +47,6 @@ const EditUserModal: React.FC<EditUserInfoModalProps> = ({
             ...prevData,
             [name]: value,
         }));
-        console.log(formData);
     };
 
     const handleSubmit = (e: React.FormEvent) => {

@@ -67,7 +67,7 @@ const ProfilePage: React.FC = () => {
       setLoadingContentOpen(false);
       openNotificationPopUpMessage("Tag updated successfully.");
 
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
+      queryClient.invalidateQueries(["tags"]);
     },
     () => {
       setLoadingContentOpen(false);

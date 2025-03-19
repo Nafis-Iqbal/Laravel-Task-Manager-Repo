@@ -41,7 +41,6 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       else{
         onFailure();
       }
-      
     },
     () => {
       onFailure();
@@ -53,7 +52,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === 'end_date' ? new Date(value).toISOString().slice(0, 19).replace("T", " ") : value,
+      [name]: name === 'end_date' ? new Date(value) : value,
     }));
   };
 

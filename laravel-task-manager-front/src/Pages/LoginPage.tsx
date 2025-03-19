@@ -55,6 +55,7 @@ const LoginPage: React.FC = () => {
     if (response.data?.auth_token) {
       sessionStorage.setItem('auth_token', response.data?.auth_token);
       sessionStorage.setItem('isAuthenticated', "true");
+      sessionStorage.setItem('user_name', 'Guest');
       dispatch(setAuth({ token: response.data.auth_token, user_id: response.data.user_id }));
 
       navigate('/dashboard');

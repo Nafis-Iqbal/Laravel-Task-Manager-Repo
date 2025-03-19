@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import {statusEnum} from "../Types&Enums/Enums";
 import { generateFakeProjects } from "../Utilities/FakeData";
 import { useGetProjectsRQ, useDeleteProjectRQ } from "../Services/API/ProjectApi";
+import { checkIfSubstring } from "../Utilities/Utilities";
 
 import BasicButton from "../Components/ElementComponents/BasicButton";
 import CreateProjectModal from "../Components/Modals/CreateProjectModal";
@@ -11,6 +12,7 @@ import NotificationPopUp from "../Components/Modals/NotificationPopUpModal";
 import LoadingModal from "../Components/Modals/LoadingContentModal";
 import { TableDataBlock } from "../Components/ElementComponents/TableDataBlock";
 import ScrollToTopButton from "../Components/StructureComponents/ScrollToTopButton";
+import { queryClient } from "../Services/API/ApiInstance";
 
 const isDebugMode:boolean = false;
 
@@ -22,6 +24,7 @@ if(isDebugMode){
 
 const ProjectsListPage = () => {
   const location = useLocation();
+  const [isGuestUser] = useState(checkIfSubstring(sessionStorage.getItem('user_name') ?? '', 'Guest'));
 
   const [projects, setProjects] = useState<Project[]>(isDebugMode? initialProjects : []);
   const [projectsFetchMessage, setProjectsFetchMessage] = useState<string>("");
@@ -45,7 +48,7 @@ const ProjectsListPage = () => {
 
   const {mutate: deleteProjectMutate} = useDeleteProjectRQ(
     () => {
-
+      queryClient.invalidateQueries(["projects"]);
       setLoadingContentOpen(false);
     },
     () => {
@@ -95,8 +98,18 @@ const ProjectsListPage = () => {
   }
 
   const onProjectDelete = (project_id: number) => {
-    setLoadingContentOpen(true);
-    deleteProjectMutate(project_id);
+    if(!isGuestUser){
+      setLoadingContentOpen(true);
+      deleteProjectMutate(project_id);
+    }
+    else if(projects.length < 5){
+      setNotificationPopupOpen(true);
+      setNotificationMessage("Guest users aren't allowed to delete projects when total projects are less than 5.");
+    }
+    else{
+      setLoadingContentOpen(true);
+      deleteProjectMutate(project_id);
+    }
   }
 
   return (
