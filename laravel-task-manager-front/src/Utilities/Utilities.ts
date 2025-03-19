@@ -25,11 +25,9 @@ export const calculateRemainingDays = (date: string | Date): number => {
 
 export const checkIfSubstring = (bigString: string, subString: string): boolean => {
     if(bigString.includes(subString)){
-        console.log(bigString + subString);
         return true;
     }
     else {
-        console.log(bigString + subString);
         return false;
     }
 }

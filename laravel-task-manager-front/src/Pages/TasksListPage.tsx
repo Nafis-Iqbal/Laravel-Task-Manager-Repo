@@ -26,7 +26,6 @@ if(isDebugMode){
 
 const TasksListPage = () => {
   const location = useLocation();
-  const [isGuestUser] = useState(checkIfSubstring(sessionStorage.getItem('user_name') ?? '', 'Guest'));
 
   const [tasks, setTasks] = useState<Task[]>(initialTasks ?? []);
   const [tasksFetchMessage, setTasksFetchMessage] = useState<string>("");
@@ -121,7 +120,7 @@ const TasksListPage = () => {
   }
 
   const onTaskDelete = (task_id: number) => {
-    if(!isGuestUser){
+    if(!checkIfSubstring(sessionStorage.getItem('user_name') ?? '', 'Guest')){
       setLoadingContentOpen(true);
       deleteTaskMutate(task_id);
     }

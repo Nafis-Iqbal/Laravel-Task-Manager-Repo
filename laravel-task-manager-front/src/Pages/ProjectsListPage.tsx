@@ -24,7 +24,6 @@ if(isDebugMode){
 
 const ProjectsListPage = () => {
   const location = useLocation();
-  const [isGuestUser] = useState(checkIfSubstring(sessionStorage.getItem('user_name') ?? '', 'Guest'));
 
   const [projects, setProjects] = useState<Project[]>(isDebugMode? initialProjects : []);
   const [projectsFetchMessage, setProjectsFetchMessage] = useState<string>("");
@@ -98,7 +97,7 @@ const ProjectsListPage = () => {
   }
 
   const onProjectDelete = (project_id: number) => {
-    if(!isGuestUser){
+    if(!checkIfSubstring(sessionStorage.getItem('user_name') ?? '', 'Guest')){
       setLoadingContentOpen(true);
       deleteProjectMutate(project_id);
     }
